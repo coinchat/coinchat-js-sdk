@@ -13,10 +13,12 @@
         console.log('global.CoinchatJSBridge',global.CoinchatJSBridge)
         console.log('sdkName',sdkName)
         console.log('addVerifyInfo(args)',addVerifyInfo(args))
-        global.CoinchatJSBridge ? CoinchatJSBridge.invoke(sdkName, addVerifyInfo(args), function(res) {
+        var callback = function(res) {
             console.log('this is call back',res);
             execute(sdkName, res, handler)
-        }) : logEventInfo(sdkName, handler);
+        };
+        console.log('callback',callback)
+        global.CoinchatJSBridge ? CoinchatJSBridge.invoke(sdkName, 'this is params', callback) : logEventInfo(sdkName, handler);
     }
 
     function on(sdkName, listener, handler) {
