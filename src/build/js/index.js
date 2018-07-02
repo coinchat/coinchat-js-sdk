@@ -1209,7 +1209,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 },
                 getLoginUserInfo : function(data) {
                     invoke('getLoginUserInfo', {
-                        'partner_no' : data.partner_no
+                        'partner_no' : data.partner_no,
+                        'timestamp'  : data.timestamp
                     }, function() {
                         data._complete = function(res) {
                             // delete res.type
