@@ -43,7 +43,7 @@ COINCHAT JS SDK文档
 JS-SDK方法
 ----
 
-###获得登录用户信息###
+###  获得登录用户信息
 coinchat.getLoginUserInfo
 
 
@@ -55,11 +55,11 @@ coinchat.getLoginUserInfo
         });
     });
     
-###支付订单###
+###  支付订单
 coinchat.payOrder
 
 
     
-###支付订单（调用智能合约）###
+###  支付订单（调用智能合约）
 coinchat.payOrderWithContract
 
