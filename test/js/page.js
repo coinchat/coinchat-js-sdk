@@ -28,6 +28,15 @@ function coinchat_config() {
         nonce    : 'xxr', // 必填，生成签名的随机串
     });
 }
+
+function getLoginUserInfo() {
+    coinchat.getLoginUserInfo({
+        partner_no  : '1528949462419631"', // 必填，唯一标识
+        success     : function(res) {
+            console.log('this is a function success',res)
+        }
+    });
+}
 /*
 coinchat.startCCPay({
     timestamp: 0, // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符

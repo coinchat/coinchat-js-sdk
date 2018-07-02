@@ -925,24 +925,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
     function invoke(sdkName, args, handler) {
-        // console.log('invoke_show_toastxx',global.CoinchatJSBridge);
-        // console.log('invoke_show_toastxx0',global.CoinchatJSBridge);
-        // console.log('invoke_show_toastxx1',CoinchatJSBridge);
-        // global.CoinchatJSBridge ? CoinchatJSBridge.showToast('123') : null;
-        // return;
-        console.log('global.CoinchatJSBridge',global.CoinchatJSBridge)
-        console.log('sdkName',sdkName)
-        // console.log('addVerifyInfo(args)',addVerifyInfo(args))
 
-        // console.log('callback',callback)
-        // console.log('global_data',global);
-        // var str=dsBridge.call("testSyn","testSyn");
-
-
-        var callback = function(res) {
-            console.log('this is call back',res);
-            execute(sdkName, res, handler)
-        };
+        console.log('invoke-start',sdkName,args,handler)
 
         var sign = getHashByData(args);
         args['sign'] = sign;
@@ -1216,13 +1200,45 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     // });
                     // settings.beta && enableBetaApi();
                 },
+
                 ready: function(callback) {
                     0 != resource.state ? callback() : (handler._completes.push(callback), !isCoinchat && settings.debug && callback())
                 },
                 error: function(callback) {
                     "6.0.2" > coinchatVersion || (-1 == resource.state ? callback(resource.data) : handler._fail = callback)
                 },
-
+                getLoginUserInfo : function(data) {
+                    invoke('getLoginUserInfo', {
+                        'partner_no' : data.partner_no
+                    }, function() {
+                        data._complete = function(res) {
+                            // delete res.type
+                            console.log('调用完成');
+                            if (data.complete) {
+                                data.complete(res);
+                            }
+                        };
+                        data._success = function(res) {
+                            // delete res.type
+                            console.log('调用成功');
+                            if (data.success) {
+                                data.success(res);
+                            }
+                        };
+                        data._cancel = function(res) {
+                            // delete res.type
+                            console.log('调用取消');
+                        };
+                        data._fail = function(res) {
+                            // delete res.type
+                            console.log('调用失败');
+                            if (data.fail) {
+                                data.fail(res);
+                            }
+                        };
+                        return data;
+                    }());
+                },
                 showToast: function(data) {
                     data = data || {};
                     console.log('invoke_show_toast');
