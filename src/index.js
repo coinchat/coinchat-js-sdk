@@ -1,8 +1,79 @@
-!function(global, factory) {
-    "function" == typeof define && (define.amd || define.cmd) ? define(function() {
-        return factory(global)
-    }) : factory(global, true)
-}(this, function(global, isGlobalMode) {
+/** * omd 让你写的javascript代码兼容所有的运行环境，符合amd, cmd, commonjs规范，在原生环境中也能运行
+ * 例如，你写了一堆代码，在没有模块化加载的时候可以使用，在模块化框架下也可以使用
+ */
+import hmacSHA256 from 'crypto-js/hmac-sha256';
+import Base64 from 'crypto-js/enc-base64';
+
+!function(spacename,dependencies,window,factory){
+    // 当define被定义的情况下
+    if(typeof define == 'function' && (define.amd != undefined || define.cmd != undefined)) {
+        console.log('define',typeof define)
+        console.log('define1',define.amd)
+        console.log('define2',define.cmd)
+        define(dependencies,function() {
+            return factory(window);
+        });
+    }
+    // 当define没有被定义的情况下
+    else {
+        var ex = factory(window);
+        // CommonJS NodeJS
+        if(typeof module !== 'undefined' && typeof exports === 'object') {
+            // 由于exports被定义，函数中的exports已经是全局变量，因此，这里就不进行任何操作
+            module.exports = ex;
+        }
+        // 原生Javascript，接口将被作为一个window的子对象
+        else {
+            window[spacename] = ex;
+        }
+    }
+}('coinchat',['dsbridge'],window,function(window,isGlobalMode = true){
+    // var $ = require('jquery');
+    var dsBridge=require("dsbridge");
+
+    /**
+     * 如何上手呢？
+     * 1. 修改上面的'spaceName'为当前文件的名称（不要后缀）【在非模块化环境中使用其接口会加载到window中，例如你可以使用类似window.spaceName.function()来调用某个接口函数】
+     * 2. 修改上面['jquery']的内容为依赖包列表【在模块化环境中可能使用】
+     * 3. window就是window，有你需要的window属性
+     * 4. 加载$，如果你的项目中依赖了jQuery或Zepto，则选择上面注释中的一种，使$可用
+     * 5. 接口，通过return返回接口
+     */
+
+    function getHashByData(data) {
+
+        var api_key = "v1ymtpfgaautzakupen4xocrnnvnxwjz";
+        var api_secret = '9cltjeoremroutzowcucjcl9y1j5tj4j';
+
+        // console.log('要签名的数据是',data);
+        var myObj = data,
+          keys = [],
+          k, i, len;
+
+        for (k in myObj) {
+          if (myObj.hasOwnProperty(k)) {
+            keys.push(k);
+          }
+        }
+
+        keys.sort();
+        len = keys.length;
+
+        var str = '';
+        for (i = 0; i < len; i++) {
+          k = keys[i];
+          str += k + '=' + myObj[k];
+        }
+
+        var sign =  hmacSHA256(str,api_secret).toString();
+        console.log('签名字符串是',str);
+        console.log('签名后是',sign);
+        return sign;
+    }
+
+    // var d = {user_id: 1, group_id: 2, timestamp: 1234567890, nonce: "some_random_character", api_key: "foo"};
+    // getHashByData(d);
+
 
     function invoke(sdkName, args, handler) {
         // console.log('invoke_show_toastxx',global.CoinchatJSBridge);
@@ -12,25 +83,31 @@
         // return;
         console.log('global.CoinchatJSBridge',global.CoinchatJSBridge)
         console.log('sdkName',sdkName)
-        console.log('addVerifyInfo(args)',addVerifyInfo(args))
+        // console.log('addVerifyInfo(args)',addVerifyInfo(args))
+
+        // console.log('callback',callback)
+        // console.log('global_data',global);
+        // var str=dsBridge.call("testSyn","testSyn");
+
+
         var callback = function(res) {
             console.log('this is call back',res);
             execute(sdkName, res, handler)
         };
-        console.log('callback',callback)
 
-        console.log('global_data',global);
-
-        var str=dsBridge.call("testSyn","testSyn");
+        var sign = getHashByData(args);
+        args['sign'] = sign;
 
         //Call asynchronously
-        dsBridge.call("testAsyn","testAsyn", function (v) {
-          alert(v);
+        dsBridge.call("invoke",sdkName,args, function (res) {
+            console.log('调用成功');
+            alert(res);
+            execute(sdkName, res, handler)
         })
 
         console.log('新方法调用invoke_finished');
 
-        global.CoinchatJSBridge ? CoinchatJSBridge.invoke(sdkName, 'this is params', callback) : logEventInfo(sdkName, handler);
+        // global.CoinchatJSBridge ? CoinchatJSBridge.invoke(sdkName, 'this is params', callback) : logEventInfo(sdkName, handler);
     }
 
     function on(sdkName, listener, handler) {
@@ -107,6 +184,8 @@
     }
 
     function logEventInfo(name, data) {
+        console.log('"' + name + '",', data || "")
+        return ;
         if (!(!settings.debug || data && data.isInnerInvoke)) {
             var event = sdkNameEventMap[name];
             event && (name = event);
@@ -149,6 +228,9 @@
     }
 
     if (!global.jCoinchat) {
+
+
+        console.log('init_coinchat',global.document,global);
 
         var eventSdkNameMap = {
                 config: "preVerifyJSAPI",
@@ -219,46 +301,71 @@
                 config: function(data) {
                     settings = data;
                     logEventInfo("config", data);
-                    var needCheck = settings.check === false ? false : true;
-                    startup(function() {
-                        if (needCheck) {
-                            invoke(eventSdkNameMap.config, {
-                                verifyJsApiList: eventArrToSdkNameArr(settings.jsApiList)
-                            }, function() {
-                                handler._complete = function(data) {
-                                    loadTimeInfo.preVerifyEndTime = getTime();
-                                    resource.state = 1;
-                                    resource.data = data;
-                                };
-                                handler.success = function(data) {
-                                    info.isPreVerifyOk = 0;
-                                };
-                                handler.fail = function(data) {
-                                    handler._fail ? handler._fail(data) : resource.state = -1;
-                                };
-                                var _completes = handler._completes;
-                                _completes.push(function() {
-                                    report();
-                                });
-                                handler.complete = function(data) {
-                                    for (var i = 0, length = _completes.length; length > i; ++i) {
-                                        _completes[i]();
-                                    }
-                                };
-                                handler._completes = [];
-                                return handler;
-                            }());
-                            loadTimeInfo.preVerifyStartTime = getTime();
-                        } else {
-                            resource.state = 1;
-                            var _completes = handler._completes;
-                            for (var i = 0, length = _completes.length; length > i; ++i) {
-                                _completes[i]();
-                            }
-                            handler._completes = [];
-                        }
-                    });
-                    settings.beta && enableBetaApi();
+                    var callback = {};
+
+                    settings['debug'] = (data['debug'] == true) ? true : false;
+                    delete data['debug'];
+                    
+                    invoke('config', data, function() {
+                        console.log('callback',callback)
+                        callback._complete = function(res) {
+                            // delete res.type
+                            console.log('调用完成');
+                        };
+                        callback._success = function(res) {
+                            // delete res.type
+                            console.log('调用成功');
+                        };
+                        callback._cancel = function(res) {
+                            // delete res.type
+                            console.log('调用取消');
+                        };
+                        callback._fail = function(res) {
+                            // delete res.type
+                            console.log('调用失败');
+                        };
+                        return callback;
+                    }());
+                    // var needCheck = settings.check === false ? false : true;
+                    // startup(function() {
+                    //     if (needCheck) {
+                    //         invoke(eventSdkNameMap.config, {
+                    //             verifyJsApiList: eventArrToSdkNameArr(settings.jsApiList)
+                    //         }, function() {
+                    //             handler._complete = function(data) {
+                    //                 loadTimeInfo.preVerifyEndTime = getTime();
+                    //                 resource.state = 1;
+                    //                 resource.data = data;
+                    //             };
+                    //             handler.success = function(data) {
+                    //                 info.isPreVerifyOk = 0;
+                    //             };
+                    //             handler.fail = function(data) {
+                    //                 handler._fail ? handler._fail(data) : resource.state = -1;
+                    //             };
+                    //             var _completes = handler._completes;
+                    //             _completes.push(function() {
+                    //                 report();
+                    //             });
+                    //             handler.complete = function(data) {
+                    //                 for (var i = 0, length = _completes.length; length > i; ++i) {
+                    //                     _completes[i]();
+                    //                 }
+                    //             };
+                    //             handler._completes = [];
+                    //             return handler;
+                    //         }());
+                    //         loadTimeInfo.preVerifyStartTime = getTime();
+                    //     } else {
+                    //         resource.state = 1;
+                    //         var _completes = handler._completes;
+                    //         for (var i = 0, length = _completes.length; length > i; ++i) {
+                    //             _completes[i]();
+                    //         }
+                    //         handler._completes = [];
+                    //     }
+                    // });
+                    // settings.beta && enableBetaApi();
                 },
                 ready: function(callback) {
                     0 != resource.state ? callback() : (handler._completes.push(callback), !isCoinchat && settings.debug && callback())
@@ -266,6 +373,7 @@
                 error: function(callback) {
                     "6.0.2" > coinchatVersion || (-1 == resource.state ? callback(resource.data) : handler._fail = callback)
                 },
+
                 showToast: function(data) {
                     data = data || {};
                     console.log('invoke_show_toast');
@@ -506,23 +614,11 @@
         }, true);
 
         console.log('set_ready')
-        if (window.WebViewJavascriptBridge) {
-            //do your work here
-            console.log('has window.WebViewJavascriptBridge')
-            jCoinchat.ready();
-        } else {
-            document.addEventListener(
-                'WebViewJavascriptBridgeReady'
-                , function() {
-                    //do your work here
-                    console.log('--------------------WebViewJavascriptBridgeReady')
-                    jCoinchat.ready();
-                },
-                false
-            );
-        }
+        window._is_coinchat_init = true;
 
         return isGlobalMode && (global.coinchat = global.jCoinchat = jCoinchat), jCoinchat
 
     }
+
+
 });
