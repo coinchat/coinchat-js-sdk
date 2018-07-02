@@ -99,7 +99,7 @@ import Base64 from 'crypto-js/enc-base64';
         args['sign'] = sign;
 
         //Call asynchronously
-        dsBridge.call("invoke",sdkName,args, function (res) {
+        dsBridge.call("invoke",{'sdkname':sdkName,'args':args}, function (res) {
             console.log('调用成功');
             alert(res);
             execute(sdkName, res, handler)
@@ -305,7 +305,7 @@ import Base64 from 'crypto-js/enc-base64';
 
                     settings['debug'] = (data['debug'] == true) ? true : false;
                     delete data['debug'];
-                    
+
                     invoke('config', data, function() {
                         console.log('callback',callback)
                         callback._complete = function(res) {

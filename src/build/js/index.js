@@ -60,821 +60,11 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 2);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* WEBPACK VAR INJECTION */(function(global, module) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_crypto_js_hmac_sha256__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_crypto_js_hmac_sha256___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_crypto_js_hmac_sha256__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_crypto_js_enc_base64__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_crypto_js_enc_base64___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_crypto_js_enc_base64__);
-/** * omd 让你写的javascript代码兼容所有的运行环境，符合amd, cmd, commonjs规范，在原生环境中也能运行
- * 例如，你写了一堆代码，在没有模块化加载的时候可以使用，在模块化框架下也可以使用
- */
-
-
-
-!function(spacename,dependencies,window,factory){
-    // 当define被定义的情况下
-    if(typeof define == 'function' && (__webpack_require__(3) != undefined || define.cmd != undefined)) {
-        console.log('define',typeof define)
-        console.log('define1',__webpack_require__(3))
-        console.log('define2',define.cmd)
-        define(dependencies,function() {
-            return factory(window);
-        });
-    }
-    // 当define没有被定义的情况下
-    else {
-        var ex = factory(window);
-        // CommonJS NodeJS
-        if(typeof module !== 'undefined' && typeof exports === 'object') {
-            // 由于exports被定义，函数中的exports已经是全局变量，因此，这里就不进行任何操作
-            module.exports = ex;
-        }
-        // 原生Javascript，接口将被作为一个window的子对象
-        else {
-            window[spacename] = ex;
-        }
-    }
-}('coinchat',['dsbridge'],window,function(window,isGlobalMode = true){
-    // var $ = require('jquery');
-    var dsBridge=__webpack_require__(1);
-
-    /**
-     * 如何上手呢？
-     * 1. 修改上面的'spaceName'为当前文件的名称（不要后缀）【在非模块化环境中使用其接口会加载到window中，例如你可以使用类似window.spaceName.function()来调用某个接口函数】
-     * 2. 修改上面['jquery']的内容为依赖包列表【在模块化环境中可能使用】
-     * 3. window就是window，有你需要的window属性
-     * 4. 加载$，如果你的项目中依赖了jQuery或Zepto，则选择上面注释中的一种，使$可用
-     * 5. 接口，通过return返回接口
-     */
-
-    function getHashByData(data) {
-
-        var api_key = "v1ymtpfgaautzakupen4xocrnnvnxwjz";
-        var api_secret = '9cltjeoremroutzowcucjcl9y1j5tj4j';
-
-        // console.log('要签名的数据是',data);
-        var myObj = data,
-          keys = [],
-          k, i, len;
-
-        for (k in myObj) {
-          if (myObj.hasOwnProperty(k)) {
-            keys.push(k);
-          }
-        }
-
-        keys.sort();
-        len = keys.length;
-
-        var str = '';
-        for (i = 0; i < len; i++) {
-          k = keys[i];
-          str += k + '=' + myObj[k];
-        }
-
-        var sign =  __WEBPACK_IMPORTED_MODULE_0_crypto_js_hmac_sha256___default()(str,api_secret).toString();
-        console.log('签名字符串是',str);
-        console.log('签名后是',sign);
-        return sign;
-    }
-
-    // var d = {user_id: 1, group_id: 2, timestamp: 1234567890, nonce: "some_random_character", api_key: "foo"};
-    // getHashByData(d);
-
-
-    function invoke(sdkName, args, handler) {
-        // console.log('invoke_show_toastxx',global.CoinchatJSBridge);
-        // console.log('invoke_show_toastxx0',global.CoinchatJSBridge);
-        // console.log('invoke_show_toastxx1',CoinchatJSBridge);
-        // global.CoinchatJSBridge ? CoinchatJSBridge.showToast('123') : null;
-        // return;
-        console.log('global.CoinchatJSBridge',global.CoinchatJSBridge)
-        console.log('sdkName',sdkName)
-        // console.log('addVerifyInfo(args)',addVerifyInfo(args))
-
-        // console.log('callback',callback)
-        // console.log('global_data',global);
-        // var str=dsBridge.call("testSyn","testSyn");
-
-
-        var callback = function(res) {
-            console.log('this is call back',res);
-            execute(sdkName, res, handler)
-        };
-
-        var sign = getHashByData(args);
-        args['sign'] = sign;
-
-        //Call asynchronously
-        dsBridge.call("invoke",sdkName,args, function (res) {
-            console.log('调用成功');
-            alert(res);
-            execute(sdkName, res, handler)
-        })
-
-        console.log('新方法调用invoke_finished');
-
-        // global.CoinchatJSBridge ? CoinchatJSBridge.invoke(sdkName, 'this is params', callback) : logEventInfo(sdkName, handler);
-    }
-
-    function on(sdkName, listener, handler) {
-        global.CoinchatJSBridge ? CoinchatJSBridge.on(sdkName, function(res) {
-            handler && handler.trigger && handler.trigger(res);
-            execute(sdkName, res, listener);
-        }) : (handler ? logEventInfo(sdkName, handler) : logEventInfo(sdkName, listener));
-    }
-
-    function addVerifyInfo(data) {
-        data = data || {};
-        data.appId = settings.appId;
-        data.verifyAppId = settings.appId;
-        data.verifySignType = "sha1";
-        data.verifyTimestamp = settings.timestamp + "";
-        data.verifyNonceStr = settings.nonceStr;
-        data.verifySignature = settings.signature;
-
-        return data;
-    }
-
-    function execute(sdkName, res, handler) {
-        "openEnterpriseChat" == sdkName && (res.errCode = res.err_code);
-        delete res.err_code, delete res.err_desc, delete res.err_detail;
-        var errMsg = res.errMsg;
-        errMsg || (errMsg = res.err_msg, delete res.err_msg, errMsg = formatErrMsg(sdkName, errMsg), res.errMsg = errMsg);
-        handler = handler || {};
-        handler._complete && (handler._complete(res), delete handler._complete);
-        errMsg = res.errMsg || "";
-        settings.debug && !handler.isInnerInvoke && alert(JSON.stringify(res));
-        var separatorIndex = errMsg.indexOf(":"),
-            status = errMsg.substring(separatorIndex + 1);
-        switch (status) {
-            case "ok":
-                handler.success && handler.success(res);
-                break;
-            case "cancel":
-                handler.cancel && handler.cancel(res);
-                break;
-            default:
-                handler.fail && handler.fail(res)
-        }
-        handler.complete && handler.complete(res)
-    }
-
-    function formatErrMsg(sdkName, errMsg) {
-        var name = sdkName,
-            event = sdkNameEventMap[sdkName];
-        event && (name = event);
-        var status = "ok";
-        if (errMsg) {
-            var separatorIndex = errMsg.indexOf(":");
-            status = errMsg.substring(separatorIndex + 1);
-            "confirm" == status && (status = "ok");
-            "failed" == status && (status = "fail"); - 1 != status.indexOf("failed_") && (status = status.substring(7)); - 1 != status.indexOf("fail_") && (status = status.substring(5));
-            status = status.replace(/_/g, " ");
-            status = status.toLowerCase();
-            ("access denied" == status || "no permission to execute" == status) && (status = "permission denied");
-            "config" == sdkName && "function not exist" == status && (status = "ok");
-            "" == status && (status = "fail");
-        }
-        return errMsg = name + ":" + status;
-    }
-
-    function eventArrToSdkNameArr(jsApiList) {
-        if (jsApiList) {
-            for (var i = 0, length = jsApiList.length; length > i; ++i) {
-                var event = jsApiList[i],
-                    sdkName = eventSdkNameMap[event];
-                sdkName && (jsApiList[i] = sdkName);
-            }
-            return jsApiList;
-        }
-    }
-
-    function logEventInfo(name, data) {
-        console.log('"' + name + '",', data || "")
-        return ;
-        if (!(!settings.debug || data && data.isInnerInvoke)) {
-            var event = sdkNameEventMap[name];
-            event && (name = event);
-            data && data._complete && delete data._complete;
-            console.log('"' + name + '",', data || "")
-        }
-    }
-
-    function report(data) {
-        if (!(isNormalPC || isCoinchatDeBugger || settings.debug || "6.0.2" > coinchatVersion || info.systemType < 0)) {
-            var img = new Image;
-            info.appId = settings.appId;
-            info.initTime = loadTimeInfo.initEndTime - loadTimeInfo.initStartTime;
-            info.preVerifyTime = loadTimeInfo.preVerifyEndTime - loadTimeInfo.preVerifyStartTime;
-            jCoinchat.getNetworkType({
-                isInnerInvoke: true,
-                success: function(res) {
-                    info.networkType = res.networkType;
-                    var reportUrl = "https://open.coinchat.qq.com/sdk/report?v=" + info.version + "&o=" + info.isPreVerifyOk + "&s=" + info.systemType + "&c=" + info.clientVersion + "&a=" + info.appId + "&n=" + info.networkType + "&i=" + info.initTime + "&p=" + info.preVerifyTime + "&u=" + info.url;
-                    img.src = reportUrl;
-                }
-            });
-        }
-    }
-
-    function getTime() {
-        return new Date().getTime();
-    }
-
-    function startup(callback) {
-        isCoinchat && (global.CoinchatJSBridge ? callback() : document.addEventListener && document.addEventListener("CoinchatJSBridgeReady", callback, false))
-    }
-
-    function enableBetaApi() {
-        jCoinchat.invoke || (jCoinchat.invoke = function(sdkName, args, handler) {
-            global.CoinchatJSBridge && CoinchatJSBridge.invoke(sdkName, addVerifyInfo(args), handler)
-        }, jCoinchat.on = function(sdkName, args) {
-            global.CoinchatJSBridge && CoinchatJSBridge.on(sdkName, args)
-        });
-    }
-
-    if (!global.jCoinchat) {
-
-
-        console.log('init_coinchat',global.document,global);
-
-        var eventSdkNameMap = {
-                config: "preVerifyJSAPI",
-                // onMenuShareTimeline: "menu:share:timeline",
-                // onMenuShareAppMessage: "menu:share:appmessage",
-                // onMenuShareQQ: "menu:share:qq",
-                // onMenuShareWeibo: "menu:share:weiboApp",
-                // onMenuShareQZone: "menu:share:QZone",
-                // previewImage: "imagePreview",
-                // getLocation: "geoLocation",
-                // openProductSpecificView: "openProductViewWithPid",
-                // addCard: "batchAddCard",
-                // openCard: "batchViewCard",
-                // chooseWXPay: "getBrandWCPayRequest",
-                // openEnterpriseRedPacket: "getRecevieBizHongBaoRequest",
-                // startSearchBeacons: "startMonitoringBeacons",
-                // stopSearchBeacons: "stopMonitoringBeacons",
-                // onSearchBeacons: "onBeaconsInRange",
-                // consumeAndShareCard: "consumedShareCard",
-                // openAddress: "editAddress"
-            },
-            sdkNameEventMap = (function() {
-                var map = {};
-                for (var i in eventSdkNameMap)
-                    map[eventSdkNameMap[i]] = i;
-                return map;
-            })(),
-            document = global.document,
-            title = document.title,
-            uaLowerCase = navigator.userAgent.toLowerCase(),
-            platLowerCase = navigator.platform.toLowerCase(),
-            isNormalPC = !(!uaLowerCase.match('mac') && !uaLowerCase.match('win')),
-            isCoinchatDeBugger = uaLowerCase.indexOf('coinchatdebugger') != -1,
-            isCoinchat = uaLowerCase.indexOf('coinchat') != -1,
-            isAndroid = uaLowerCase.indexOf('android') != -1,
-            isIOs = uaLowerCase.indexOf('iphone') != -1 || uaLowerCase.indexOf('ipad') != -1,
-            coinchatVersion = (function() {
-                var version = uaLowerCase.match(/coinchat\/(\d+\.\d+\.\d+)/) || uaLowerCase.match(/coinchat\/(\d+\.\d+)/);
-                return version ? version[1] : ''
-            })(),
-            loadTimeInfo = {
-                initStartTime: getTime(),
-                initEndTime: 0,
-                preVerifyStartTime: 0,
-                preVerifyEndTime: 0
-            },
-            info = {
-                version: 1,
-                appId: "",
-                initTime: 0,
-                preVerifyTime: 0,
-                networkType: "",
-                isPreVerifyOk: 1,
-                systemType: isIOs ? 1 : isAndroid ? 2 : -1,
-                clientVersion: coinchatVersion,
-                url: encodeURIComponent(location.href)
-            },
-            settings = {},
-            handler = {
-                _completes: []
-            },
-            resource = {
-                state: 0,
-                data: {}
-            };
-
-        var jCoinchat = {
-                config: function(data) {
-                    settings = data;
-                    logEventInfo("config", data);
-                    var callback = {};
-
-                    settings['debug'] = (data['debug'] == true) ? true : false;
-                    delete data['debug'];
-                    
-                    invoke('config', data, function() {
-                        console.log('callback',callback)
-                        callback._complete = function(res) {
-                            // delete res.type
-                            console.log('调用完成');
-                        };
-                        callback._success = function(res) {
-                            // delete res.type
-                            console.log('调用成功');
-                        };
-                        callback._cancel = function(res) {
-                            // delete res.type
-                            console.log('调用取消');
-                        };
-                        callback._fail = function(res) {
-                            // delete res.type
-                            console.log('调用失败');
-                        };
-                        return callback;
-                    }());
-                    // var needCheck = settings.check === false ? false : true;
-                    // startup(function() {
-                    //     if (needCheck) {
-                    //         invoke(eventSdkNameMap.config, {
-                    //             verifyJsApiList: eventArrToSdkNameArr(settings.jsApiList)
-                    //         }, function() {
-                    //             handler._complete = function(data) {
-                    //                 loadTimeInfo.preVerifyEndTime = getTime();
-                    //                 resource.state = 1;
-                    //                 resource.data = data;
-                    //             };
-                    //             handler.success = function(data) {
-                    //                 info.isPreVerifyOk = 0;
-                    //             };
-                    //             handler.fail = function(data) {
-                    //                 handler._fail ? handler._fail(data) : resource.state = -1;
-                    //             };
-                    //             var _completes = handler._completes;
-                    //             _completes.push(function() {
-                    //                 report();
-                    //             });
-                    //             handler.complete = function(data) {
-                    //                 for (var i = 0, length = _completes.length; length > i; ++i) {
-                    //                     _completes[i]();
-                    //                 }
-                    //             };
-                    //             handler._completes = [];
-                    //             return handler;
-                    //         }());
-                    //         loadTimeInfo.preVerifyStartTime = getTime();
-                    //     } else {
-                    //         resource.state = 1;
-                    //         var _completes = handler._completes;
-                    //         for (var i = 0, length = _completes.length; length > i; ++i) {
-                    //             _completes[i]();
-                    //         }
-                    //         handler._completes = [];
-                    //     }
-                    // });
-                    // settings.beta && enableBetaApi();
-                },
-                ready: function(callback) {
-                    0 != resource.state ? callback() : (handler._completes.push(callback), !isCoinchat && settings.debug && callback())
-                },
-                error: function(callback) {
-                    "6.0.2" > coinchatVersion || (-1 == resource.state ? callback(resource.data) : handler._fail = callback)
-                },
-
-                showToast: function(data) {
-                    data = data || {};
-                    console.log('invoke_show_toast');
-                    invoke('showToast', data, function() {
-                        data._complete = function(res) {
-                            // delete res.type
-                            console.log('调用完成');
-                        };
-                        data._success = function(res) {
-                            // delete res.type
-                            console.log('调用成功');
-                        };
-                        data._cancel = function(res) {
-                            // delete res.type
-                            console.log('调用取消');
-                        };
-                        data._fail = function(res) {
-                            // delete res.type
-                            console.log('调用失败');
-                        };
-                        return data;
-                    }());
-                },
-
-                // checkJsApi: function(data) {
-                //     var formatResultData = function(data) {
-                //         var checkResult = data.checkResult;
-                //         for (var key in checkResult) {
-                //             var event = sdkNameEventMap[key];
-                //             event && (checkResult[event] = checkResult[key], delete checkResult[key]);
-                //         }
-                //         return data;
-                //     };
-                //     invoke("checkJsApi", {
-                //         jsApiList: eventArrToSdkNameArr(data.jsApiList)
-                //     }, function() {
-                //         data._complete = function(data) {
-                //             if (isAndroid) {
-                //                 var resultStr = data.checkResult;
-                //                 resultStr && (data.checkResult = JSON.parse(resultStr));
-                //             }
-                //             data = formatResultData(data);
-                //         };
-                //         return data;
-                //     }());
-                // },
-                onMenuShareTimeline: function(data) {
-                    on(eventSdkNameMap.onMenuShareTimeline, {
-                        complete: function() {
-                            invoke("shareTimeline", {
-                                title: data.title || title,
-                                desc: data.title || title,
-                                img_url: data.imgUrl || "",
-                                link: data.link || location.href,
-                                type: data.type || "link",
-                                data_url: data.dataUrl || ""
-                            }, data);
-                        }
-                    }, data);
-                },
-                onMenuShareAppMessage: function(data) {
-                    on(eventSdkNameMap.onMenuShareAppMessage, {
-                        complete: function() {
-                            invoke("sendAppMessage", {
-                                title: data.title || title,
-                                desc: data.desc || "",
-                                link: data.link || location.href,
-                                img_url: data.imgUrl || "",
-                                type: data.type || "link",
-                                data_url: data.dataUrl || ""
-                            }, data);
-                        }
-                    }, data);
-                },
-                onMenuShareQQ: function(data) {
-                    on(eventSdkNameMap.onMenuShareQQ, {
-                        complete: function() {
-                            invoke("shareQQ", {
-                                title: data.title || title,
-                                desc: data.desc || "",
-                                img_url: data.imgUrl || "",
-                                link: data.link || location.href
-                            }, data);
-                        }
-                    }, data);
-                },
-                onMenuShareWeibo: function(data) {
-                    on(eventSdkNameMap.onMenuShareWeibo, {
-                        complete: function() {
-                            invoke("shareWeiboApp", {
-                                title: data.title || title,
-                                desc: data.desc || "",
-                                img_url: data.imgUrl || "",
-                                link: data.link || location.href
-                            }, data);
-                        }
-                    }, data);
-                },
-                onMenuShareQZone: function(data) {
-                    on(eventSdkNameMap.onMenuShareQZone, {
-                        complete: function() {
-                            invoke("shareQZone", {
-                                title: data.title || title,
-                                desc: data.desc || "",
-                                img_url: data.imgUrl || "",
-                                link: data.link || location.href
-                            }, data);
-                        }
-                    }, data);
-                },
-                getNetworkType: function(data) {
-                    var formatErrMsg = function(res) {
-                        var errMsg = res.errMsg;
-                        res.errMsg = "getNetworkType:ok";
-                        var subtype = res.subtype;
-                        delete res.subtype
-                        if (subtype)
-                            res.networkType = subtype;
-                        else {
-                            var separatorIndex = errMsg.indexOf(":"),
-                                status = errMsg.substring(separatorIndex + 1);
-                            switch (status) {
-                                case "wifi":
-                                case "edge":
-                                case "wwan":
-                                    res.networkType = status;
-                                    break;
-                                default:
-                                    res.errMsg = "getNetworkType:fail"
-                            }
-                        }
-                        return res;
-                    };
-                    invoke("getNetworkType", {}, function() {
-                        data._complete = function(res) {
-                            res = formatErrMsg(res);
-                        };
-                        return data;
-                    }());
-                },
-                getLocation: function(data) {
-                    data = data || {};
-                    invoke(eventSdkNameMap.getLocation, {
-                        type: data.type || "wgs84"
-                    }, function() {
-                        data._complete = function(res) {
-                            delete res.type
-                        };
-                        return data;
-                    }());
-                },
-                hideOptionMenu: function(data) {
-                    invoke("hideOptionMenu", {}, data);
-                },
-                showOptionMenu: function(data) {
-                    invoke("showOptionMenu", {}, data);
-                },
-                closeWindow: function(data) {
-                    data = data || {};
-                    invoke("closeWindow", {}, data);
-                },
-                hideMenuItems: function(data) {
-                    invoke("hideMenuItems", {
-                        menuList: data.menuList
-                    }, data);
-                },
-                showMenuItems: function(data) {
-                    invoke("showMenuItems", {
-                        menuList: data.menuList
-                    }, data);
-                },
-                hideAllNonBaseMenuItem: function(data) {
-                    invoke("hideAllNonBaseMenuItem", {}, data);
-                },
-                showAllNonBaseMenuItem: function(data) {
-                    invoke("showAllNonBaseMenuItem", {}, data);
-                },
-                scanQRCode: function(data) {
-                    data = data || {};
-                    invoke("scanQRCode", {
-                        needResult: data.needResult || 0,
-                        scanType: data.scanType || ["qrCode", "barCode"]
-                    }, function() {
-                        data._complete = function(res) {
-                            if (isIOs) {
-                                var resultStr = res.resultStr;
-                                if (resultStr) {
-                                    var result = JSON.parse(resultStr);
-                                    res.resultStr = result && result.scan_code && result.scan_code.scan_result
-                                }
-                            }
-                        };
-                        return data;
-                    }());
-                }
-            },
-            next_iOSLocalImgId = 1,
-            iOS_LocalImgMap = {};
-
-        // 兼容 iOS WKWebview 不支持 localId 直接显示图片的问题
-        document.addEventListener("error", function(event) {
-            if (!isAndroid) {
-                var target = event.target,
-                    targetTagName = target.tagName,
-                    targetSrc = target.src;
-                if ("IMG" == targetTagName || "VIDEO" == targetTagName || "AUDIO" == targetTagName || "SOURCE" == targetTagName) {
-                    var isWxlocalresource = targetSrc.indexOf("wxlocalresource://") != -1;
-                    if (isWxlocalresource) {
-                        event.preventDefault(), event.stopPropagation();
-                        var wxId = target["wx-id"];
-                        wxId || (wxId = next_iOSLocalImgId++, target["wx-id"] = wxId);
-                        if (iOS_LocalImgMap[wxId]) {
-                            return;
-                        }
-                        iOS_LocalImgMap[wxId] = true;
-                        wx.ready(function() {
-                            wx.getLocalImgData({
-                                localId: targetSrc,
-                                success: function(res) {
-                                    target.src = res.localData
-                                }
-                            })
-                        });
-                    }
-                }
-            }
-        }, true);
-        document.addEventListener("load", function(event) {
-            if (!isAndroid) {
-                var target = event.target,
-                    targetTagName = target.tagName,
-                    targetSrc = target.src;
-                if ("IMG" == targetTagName || "VIDEO" == targetTagName || "AUDIO" == targetTagName || "SOURCE" == targetTagName) {
-                    var wxId = target["wx-id"];
-                    wxId && (iOS_LocalImgMap[wxId] = false);
-                }
-            }
-        }, true);
-
-        console.log('set_ready')
-        window._is_coinchat_init = true;
-
-        return isGlobalMode && (global.coinchat = global.jCoinchat = jCoinchat), jCoinchat
-
-    }
-
-
-});
-/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(4), __webpack_require__(7)(module)))
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports) {
-
-var bridge = {
-    default:this,// for typescript
-    call: function (method, args, cb) {
-        var ret = '';
-        if (typeof args == 'function') {
-            cb = args;
-            args = {};
-        }
-        var arg={data:args===undefined?null:args}
-        if (typeof cb == 'function') {
-            var cbName = 'dscb' + window.dscb++;
-            window[cbName] = cb;
-            arg['_dscbstub'] = cbName;
-        }
-        arg = JSON.stringify(arg)
-
-        //if in webview that dsBridge provided, call!
-        if(window._dsbridge){
-           ret=  _dsbridge.call(method, arg)
-        }else if(window._dswk||navigator.userAgent.indexOf("_dsbridge")!=-1){
-           ret = prompt("_dsbridge=" + method, arg);
-        }
-
-       return  JSON.parse(ret||'{}').data
-    },
-    register: function (name, fun, asyn) {
-        var q = asyn ? window._dsaf : window._dsf
-        if (!window._dsInit) {
-            window._dsInit = true;
-            //notify native that js apis register successfully on next event loop
-            setTimeout(function () {
-                bridge.call("_dsb.dsinit");
-            }, 0)
-        }
-        if (typeof fun == "object") {
-            q._obs[name] = fun;
-        } else {
-            q[name] = fun
-        }
-    },
-    registerAsyn: function (name, fun) {
-        this.register(name, fun, true);
-    },
-    hasNativeMethod: function (name, type) {
-        return this.call("_dsb.hasNativeMethod", {name: name, type:type||"all"});
-    },
-    disableJavascriptDialogBlock: function (disable) {
-        this.call("_dsb.disableJavascriptDialogBlock", {
-            disable: disable !== false
-        })
-    }
-};
-
-!function () {
-    if (window._dsf) return;
-    var ob = {
-        _dsf: {
-            _obs: {}
-        },
-        _dsaf: {
-            _obs: {}
-        },
-        dscb: 0,
-        dsBridge: bridge,
-        close: function () {
-            bridge.call("_dsb.closePage")
-        },
-        _handleMessageFromNative: function (info) {
-            var arg = JSON.parse(info.data);
-            var ret = {
-                id: info.callbackId,
-                complete: true
-            }
-            var f = this._dsf[info.method];
-            var af = this._dsaf[info.method]
-            var callSyn = function (f, ob) {
-                ret.data = f.apply(ob, arg)
-                bridge.call("_dsb.returnValue", ret)
-            }
-            var callAsyn = function (f, ob) {
-                arg.push(function (data, complete) {
-                    ret.data = data;
-                    ret.complete = complete!==false;
-                    bridge.call("_dsb.returnValue", ret)
-                })
-                f.apply(ob, arg)
-            }
-            if (f) {
-                callSyn(f, this._dsf);
-            } else if (af) {
-                callAsyn(af, this._dsaf);
-            } else {
-                //with namespace
-                var name = info.method.split('.');
-                if (name.length<2) return;
-                var method=name.pop();
-                var namespace=name.join('.')
-                var obs = this._dsf._obs;
-                var ob = obs[namespace] || {};
-                var m = ob[method];
-                if (m && typeof m == "function") {
-                    callSyn(m, ob);
-                    return;
-                }
-                obs = this._dsaf._obs;
-                ob = obs[namespace] || {};
-                m = ob[method];
-                if (m && typeof m == "function") {
-                    callAsyn(m, ob);
-                    return;
-                }
-            }
-        }
-    }
-    for (var attr in ob) {
-        window[attr] = ob[attr]
-    }
-    bridge.register("_hasJavascriptMethod", function (method, tag) {
-         var name = method.split('.')
-         if(name.length<2) {
-           return !!(_dsf[name]||_dsaf[name])
-         }else{
-           // with namespace
-           var method=name.pop()
-           var namespace=name.join('.')
-           var ob=_dsf._obs[namespace]||_dsaf._obs[namespace]
-           return ob&&!!ob[method]
-         }
-    })
-}();
-
-module.exports = bridge;
-
-/***/ }),
-/* 2 */,
-/* 3 */
-/***/ (function(module, exports) {
-
-/* WEBPACK VAR INJECTION */(function(__webpack_amd_options__) {/* globals __webpack_amd_options__ */
-module.exports = __webpack_amd_options__;
-
-/* WEBPACK VAR INJECTION */}.call(exports, {}))
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports) {
-
-var g;
-
-// This works in non-strict mode
-g = (function() {
-	return this;
-})();
-
-try {
-	// This works if eval is allowed (see CSP)
-	g = g || Function("return this")() || (1,eval)("this");
-} catch(e) {
-	// This works if the window reference is available
-	if(typeof window === "object")
-		g = window;
-}
-
-// g can still be undefined, but nothing to do about it...
-// We return undefined, instead of nothing here, so it's
-// easier to handle this case. if(!global) { ...}
-
-module.exports = g;
-
-
-/***/ }),
-/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 ;(function (root, factory) {
@@ -1639,8 +829,679 @@ module.exports = g;
 }));
 
 /***/ }),
-/* 6 */,
-/* 7 */
+/* 1 */
+/***/ (function(module, exports) {
+
+/* WEBPACK VAR INJECTION */(function(__webpack_amd_options__) {/* globals __webpack_amd_options__ */
+module.exports = __webpack_amd_options__;
+
+/* WEBPACK VAR INJECTION */}.call(exports, {}))
+
+/***/ }),
+/* 2 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* WEBPACK VAR INJECTION */(function(global, module) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_crypto_js_hmac_sha256__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_crypto_js_hmac_sha256___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_crypto_js_hmac_sha256__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_crypto_js_enc_base64__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_crypto_js_enc_base64___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_crypto_js_enc_base64__);
+/** * omd 让你写的javascript代码兼容所有的运行环境，符合amd, cmd, commonjs规范，在原生环境中也能运行
+ * 例如，你写了一堆代码，在没有模块化加载的时候可以使用，在模块化框架下也可以使用
+ */
+
+
+
+!function(spacename,dependencies,window,factory){
+    // 当define被定义的情况下
+    if(typeof define == 'function' && (__webpack_require__(1) != undefined || define.cmd != undefined)) {
+        console.log('define',typeof define)
+        console.log('define1',__webpack_require__(1))
+        console.log('define2',define.cmd)
+        define(dependencies,function() {
+            return factory(window);
+        });
+    }
+    // 当define没有被定义的情况下
+    else {
+        var ex = factory(window);
+        // CommonJS NodeJS
+        if(typeof module !== 'undefined' && typeof exports === 'object') {
+            // 由于exports被定义，函数中的exports已经是全局变量，因此，这里就不进行任何操作
+            module.exports = ex;
+        }
+        // 原生Javascript，接口将被作为一个window的子对象
+        else {
+            window[spacename] = ex;
+        }
+    }
+}('coinchat',['dsbridge'],window,function(window,isGlobalMode = true){
+    // var $ = require('jquery');
+    var dsBridge=__webpack_require__(9);
+
+    /**
+     * 如何上手呢？
+     * 1. 修改上面的'spaceName'为当前文件的名称（不要后缀）【在非模块化环境中使用其接口会加载到window中，例如你可以使用类似window.spaceName.function()来调用某个接口函数】
+     * 2. 修改上面['jquery']的内容为依赖包列表【在模块化环境中可能使用】
+     * 3. window就是window，有你需要的window属性
+     * 4. 加载$，如果你的项目中依赖了jQuery或Zepto，则选择上面注释中的一种，使$可用
+     * 5. 接口，通过return返回接口
+     */
+
+    function getHashByData(data) {
+
+        var api_key = "v1ymtpfgaautzakupen4xocrnnvnxwjz";
+        var api_secret = '9cltjeoremroutzowcucjcl9y1j5tj4j';
+
+        // console.log('要签名的数据是',data);
+        var myObj = data,
+          keys = [],
+          k, i, len;
+
+        for (k in myObj) {
+          if (myObj.hasOwnProperty(k)) {
+            keys.push(k);
+          }
+        }
+
+        keys.sort();
+        len = keys.length;
+
+        var str = '';
+        for (i = 0; i < len; i++) {
+          k = keys[i];
+          str += k + '=' + myObj[k];
+        }
+
+        var sign =  __WEBPACK_IMPORTED_MODULE_0_crypto_js_hmac_sha256___default()(str,api_secret).toString();
+        console.log('签名字符串是',str);
+        console.log('签名后是',sign);
+        return sign;
+    }
+
+    // var d = {user_id: 1, group_id: 2, timestamp: 1234567890, nonce: "some_random_character", api_key: "foo"};
+    // getHashByData(d);
+
+
+    function invoke(sdkName, args, handler) {
+        // console.log('invoke_show_toastxx',global.CoinchatJSBridge);
+        // console.log('invoke_show_toastxx0',global.CoinchatJSBridge);
+        // console.log('invoke_show_toastxx1',CoinchatJSBridge);
+        // global.CoinchatJSBridge ? CoinchatJSBridge.showToast('123') : null;
+        // return;
+        console.log('global.CoinchatJSBridge',global.CoinchatJSBridge)
+        console.log('sdkName',sdkName)
+        // console.log('addVerifyInfo(args)',addVerifyInfo(args))
+
+        // console.log('callback',callback)
+        // console.log('global_data',global);
+        // var str=dsBridge.call("testSyn","testSyn");
+
+
+        var callback = function(res) {
+            console.log('this is call back',res);
+            execute(sdkName, res, handler)
+        };
+
+        var sign = getHashByData(args);
+        args['sign'] = sign;
+
+        //Call asynchronously
+        dsBridge.call("invoke",{'sdkname':sdkName,'args':args}, function (res) {
+            console.log('调用成功');
+            alert(res);
+            execute(sdkName, res, handler)
+        })
+
+        console.log('新方法调用invoke_finished');
+
+        // global.CoinchatJSBridge ? CoinchatJSBridge.invoke(sdkName, 'this is params', callback) : logEventInfo(sdkName, handler);
+    }
+
+    function on(sdkName, listener, handler) {
+        global.CoinchatJSBridge ? CoinchatJSBridge.on(sdkName, function(res) {
+            handler && handler.trigger && handler.trigger(res);
+            execute(sdkName, res, listener);
+        }) : (handler ? logEventInfo(sdkName, handler) : logEventInfo(sdkName, listener));
+    }
+
+    function addVerifyInfo(data) {
+        data = data || {};
+        data.appId = settings.appId;
+        data.verifyAppId = settings.appId;
+        data.verifySignType = "sha1";
+        data.verifyTimestamp = settings.timestamp + "";
+        data.verifyNonceStr = settings.nonceStr;
+        data.verifySignature = settings.signature;
+
+        return data;
+    }
+
+    function execute(sdkName, res, handler) {
+        "openEnterpriseChat" == sdkName && (res.errCode = res.err_code);
+        delete res.err_code, delete res.err_desc, delete res.err_detail;
+        var errMsg = res.errMsg;
+        errMsg || (errMsg = res.err_msg, delete res.err_msg, errMsg = formatErrMsg(sdkName, errMsg), res.errMsg = errMsg);
+        handler = handler || {};
+        handler._complete && (handler._complete(res), delete handler._complete);
+        errMsg = res.errMsg || "";
+        settings.debug && !handler.isInnerInvoke && alert(JSON.stringify(res));
+        var separatorIndex = errMsg.indexOf(":"),
+            status = errMsg.substring(separatorIndex + 1);
+        switch (status) {
+            case "ok":
+                handler.success && handler.success(res);
+                break;
+            case "cancel":
+                handler.cancel && handler.cancel(res);
+                break;
+            default:
+                handler.fail && handler.fail(res)
+        }
+        handler.complete && handler.complete(res)
+    }
+
+    function formatErrMsg(sdkName, errMsg) {
+        var name = sdkName,
+            event = sdkNameEventMap[sdkName];
+        event && (name = event);
+        var status = "ok";
+        if (errMsg) {
+            var separatorIndex = errMsg.indexOf(":");
+            status = errMsg.substring(separatorIndex + 1);
+            "confirm" == status && (status = "ok");
+            "failed" == status && (status = "fail"); - 1 != status.indexOf("failed_") && (status = status.substring(7)); - 1 != status.indexOf("fail_") && (status = status.substring(5));
+            status = status.replace(/_/g, " ");
+            status = status.toLowerCase();
+            ("access denied" == status || "no permission to execute" == status) && (status = "permission denied");
+            "config" == sdkName && "function not exist" == status && (status = "ok");
+            "" == status && (status = "fail");
+        }
+        return errMsg = name + ":" + status;
+    }
+
+    function eventArrToSdkNameArr(jsApiList) {
+        if (jsApiList) {
+            for (var i = 0, length = jsApiList.length; length > i; ++i) {
+                var event = jsApiList[i],
+                    sdkName = eventSdkNameMap[event];
+                sdkName && (jsApiList[i] = sdkName);
+            }
+            return jsApiList;
+        }
+    }
+
+    function logEventInfo(name, data) {
+        console.log('"' + name + '",', data || "")
+        return ;
+        if (!(!settings.debug || data && data.isInnerInvoke)) {
+            var event = sdkNameEventMap[name];
+            event && (name = event);
+            data && data._complete && delete data._complete;
+            console.log('"' + name + '",', data || "")
+        }
+    }
+
+    function report(data) {
+        if (!(isNormalPC || isCoinchatDeBugger || settings.debug || "6.0.2" > coinchatVersion || info.systemType < 0)) {
+            var img = new Image;
+            info.appId = settings.appId;
+            info.initTime = loadTimeInfo.initEndTime - loadTimeInfo.initStartTime;
+            info.preVerifyTime = loadTimeInfo.preVerifyEndTime - loadTimeInfo.preVerifyStartTime;
+            jCoinchat.getNetworkType({
+                isInnerInvoke: true,
+                success: function(res) {
+                    info.networkType = res.networkType;
+                    var reportUrl = "https://open.coinchat.qq.com/sdk/report?v=" + info.version + "&o=" + info.isPreVerifyOk + "&s=" + info.systemType + "&c=" + info.clientVersion + "&a=" + info.appId + "&n=" + info.networkType + "&i=" + info.initTime + "&p=" + info.preVerifyTime + "&u=" + info.url;
+                    img.src = reportUrl;
+                }
+            });
+        }
+    }
+
+    function getTime() {
+        return new Date().getTime();
+    }
+
+    function startup(callback) {
+        isCoinchat && (global.CoinchatJSBridge ? callback() : document.addEventListener && document.addEventListener("CoinchatJSBridgeReady", callback, false))
+    }
+
+    function enableBetaApi() {
+        jCoinchat.invoke || (jCoinchat.invoke = function(sdkName, args, handler) {
+            global.CoinchatJSBridge && CoinchatJSBridge.invoke(sdkName, addVerifyInfo(args), handler)
+        }, jCoinchat.on = function(sdkName, args) {
+            global.CoinchatJSBridge && CoinchatJSBridge.on(sdkName, args)
+        });
+    }
+
+    if (!global.jCoinchat) {
+
+
+        console.log('init_coinchat',global.document,global);
+
+        var eventSdkNameMap = {
+                config: "preVerifyJSAPI",
+                // onMenuShareTimeline: "menu:share:timeline",
+                // onMenuShareAppMessage: "menu:share:appmessage",
+                // onMenuShareQQ: "menu:share:qq",
+                // onMenuShareWeibo: "menu:share:weiboApp",
+                // onMenuShareQZone: "menu:share:QZone",
+                // previewImage: "imagePreview",
+                // getLocation: "geoLocation",
+                // openProductSpecificView: "openProductViewWithPid",
+                // addCard: "batchAddCard",
+                // openCard: "batchViewCard",
+                // chooseWXPay: "getBrandWCPayRequest",
+                // openEnterpriseRedPacket: "getRecevieBizHongBaoRequest",
+                // startSearchBeacons: "startMonitoringBeacons",
+                // stopSearchBeacons: "stopMonitoringBeacons",
+                // onSearchBeacons: "onBeaconsInRange",
+                // consumeAndShareCard: "consumedShareCard",
+                // openAddress: "editAddress"
+            },
+            sdkNameEventMap = (function() {
+                var map = {};
+                for (var i in eventSdkNameMap)
+                    map[eventSdkNameMap[i]] = i;
+                return map;
+            })(),
+            document = global.document,
+            title = document.title,
+            uaLowerCase = navigator.userAgent.toLowerCase(),
+            platLowerCase = navigator.platform.toLowerCase(),
+            isNormalPC = !(!uaLowerCase.match('mac') && !uaLowerCase.match('win')),
+            isCoinchatDeBugger = uaLowerCase.indexOf('coinchatdebugger') != -1,
+            isCoinchat = uaLowerCase.indexOf('coinchat') != -1,
+            isAndroid = uaLowerCase.indexOf('android') != -1,
+            isIOs = uaLowerCase.indexOf('iphone') != -1 || uaLowerCase.indexOf('ipad') != -1,
+            coinchatVersion = (function() {
+                var version = uaLowerCase.match(/coinchat\/(\d+\.\d+\.\d+)/) || uaLowerCase.match(/coinchat\/(\d+\.\d+)/);
+                return version ? version[1] : ''
+            })(),
+            loadTimeInfo = {
+                initStartTime: getTime(),
+                initEndTime: 0,
+                preVerifyStartTime: 0,
+                preVerifyEndTime: 0
+            },
+            info = {
+                version: 1,
+                appId: "",
+                initTime: 0,
+                preVerifyTime: 0,
+                networkType: "",
+                isPreVerifyOk: 1,
+                systemType: isIOs ? 1 : isAndroid ? 2 : -1,
+                clientVersion: coinchatVersion,
+                url: encodeURIComponent(location.href)
+            },
+            settings = {},
+            handler = {
+                _completes: []
+            },
+            resource = {
+                state: 0,
+                data: {}
+            };
+
+        var jCoinchat = {
+                config: function(data) {
+                    settings = data;
+                    logEventInfo("config", data);
+                    var callback = {};
+
+                    settings['debug'] = (data['debug'] == true) ? true : false;
+                    delete data['debug'];
+
+                    invoke('config', data, function() {
+                        console.log('callback',callback)
+                        callback._complete = function(res) {
+                            // delete res.type
+                            console.log('调用完成');
+                        };
+                        callback._success = function(res) {
+                            // delete res.type
+                            console.log('调用成功');
+                        };
+                        callback._cancel = function(res) {
+                            // delete res.type
+                            console.log('调用取消');
+                        };
+                        callback._fail = function(res) {
+                            // delete res.type
+                            console.log('调用失败');
+                        };
+                        return callback;
+                    }());
+                    // var needCheck = settings.check === false ? false : true;
+                    // startup(function() {
+                    //     if (needCheck) {
+                    //         invoke(eventSdkNameMap.config, {
+                    //             verifyJsApiList: eventArrToSdkNameArr(settings.jsApiList)
+                    //         }, function() {
+                    //             handler._complete = function(data) {
+                    //                 loadTimeInfo.preVerifyEndTime = getTime();
+                    //                 resource.state = 1;
+                    //                 resource.data = data;
+                    //             };
+                    //             handler.success = function(data) {
+                    //                 info.isPreVerifyOk = 0;
+                    //             };
+                    //             handler.fail = function(data) {
+                    //                 handler._fail ? handler._fail(data) : resource.state = -1;
+                    //             };
+                    //             var _completes = handler._completes;
+                    //             _completes.push(function() {
+                    //                 report();
+                    //             });
+                    //             handler.complete = function(data) {
+                    //                 for (var i = 0, length = _completes.length; length > i; ++i) {
+                    //                     _completes[i]();
+                    //                 }
+                    //             };
+                    //             handler._completes = [];
+                    //             return handler;
+                    //         }());
+                    //         loadTimeInfo.preVerifyStartTime = getTime();
+                    //     } else {
+                    //         resource.state = 1;
+                    //         var _completes = handler._completes;
+                    //         for (var i = 0, length = _completes.length; length > i; ++i) {
+                    //             _completes[i]();
+                    //         }
+                    //         handler._completes = [];
+                    //     }
+                    // });
+                    // settings.beta && enableBetaApi();
+                },
+                ready: function(callback) {
+                    0 != resource.state ? callback() : (handler._completes.push(callback), !isCoinchat && settings.debug && callback())
+                },
+                error: function(callback) {
+                    "6.0.2" > coinchatVersion || (-1 == resource.state ? callback(resource.data) : handler._fail = callback)
+                },
+
+                showToast: function(data) {
+                    data = data || {};
+                    console.log('invoke_show_toast');
+                    invoke('showToast', data, function() {
+                        data._complete = function(res) {
+                            // delete res.type
+                            console.log('调用完成');
+                        };
+                        data._success = function(res) {
+                            // delete res.type
+                            console.log('调用成功');
+                        };
+                        data._cancel = function(res) {
+                            // delete res.type
+                            console.log('调用取消');
+                        };
+                        data._fail = function(res) {
+                            // delete res.type
+                            console.log('调用失败');
+                        };
+                        return data;
+                    }());
+                },
+
+                // checkJsApi: function(data) {
+                //     var formatResultData = function(data) {
+                //         var checkResult = data.checkResult;
+                //         for (var key in checkResult) {
+                //             var event = sdkNameEventMap[key];
+                //             event && (checkResult[event] = checkResult[key], delete checkResult[key]);
+                //         }
+                //         return data;
+                //     };
+                //     invoke("checkJsApi", {
+                //         jsApiList: eventArrToSdkNameArr(data.jsApiList)
+                //     }, function() {
+                //         data._complete = function(data) {
+                //             if (isAndroid) {
+                //                 var resultStr = data.checkResult;
+                //                 resultStr && (data.checkResult = JSON.parse(resultStr));
+                //             }
+                //             data = formatResultData(data);
+                //         };
+                //         return data;
+                //     }());
+                // },
+                onMenuShareTimeline: function(data) {
+                    on(eventSdkNameMap.onMenuShareTimeline, {
+                        complete: function() {
+                            invoke("shareTimeline", {
+                                title: data.title || title,
+                                desc: data.title || title,
+                                img_url: data.imgUrl || "",
+                                link: data.link || location.href,
+                                type: data.type || "link",
+                                data_url: data.dataUrl || ""
+                            }, data);
+                        }
+                    }, data);
+                },
+                onMenuShareAppMessage: function(data) {
+                    on(eventSdkNameMap.onMenuShareAppMessage, {
+                        complete: function() {
+                            invoke("sendAppMessage", {
+                                title: data.title || title,
+                                desc: data.desc || "",
+                                link: data.link || location.href,
+                                img_url: data.imgUrl || "",
+                                type: data.type || "link",
+                                data_url: data.dataUrl || ""
+                            }, data);
+                        }
+                    }, data);
+                },
+                onMenuShareQQ: function(data) {
+                    on(eventSdkNameMap.onMenuShareQQ, {
+                        complete: function() {
+                            invoke("shareQQ", {
+                                title: data.title || title,
+                                desc: data.desc || "",
+                                img_url: data.imgUrl || "",
+                                link: data.link || location.href
+                            }, data);
+                        }
+                    }, data);
+                },
+                onMenuShareWeibo: function(data) {
+                    on(eventSdkNameMap.onMenuShareWeibo, {
+                        complete: function() {
+                            invoke("shareWeiboApp", {
+                                title: data.title || title,
+                                desc: data.desc || "",
+                                img_url: data.imgUrl || "",
+                                link: data.link || location.href
+                            }, data);
+                        }
+                    }, data);
+                },
+                onMenuShareQZone: function(data) {
+                    on(eventSdkNameMap.onMenuShareQZone, {
+                        complete: function() {
+                            invoke("shareQZone", {
+                                title: data.title || title,
+                                desc: data.desc || "",
+                                img_url: data.imgUrl || "",
+                                link: data.link || location.href
+                            }, data);
+                        }
+                    }, data);
+                },
+                getNetworkType: function(data) {
+                    var formatErrMsg = function(res) {
+                        var errMsg = res.errMsg;
+                        res.errMsg = "getNetworkType:ok";
+                        var subtype = res.subtype;
+                        delete res.subtype
+                        if (subtype)
+                            res.networkType = subtype;
+                        else {
+                            var separatorIndex = errMsg.indexOf(":"),
+                                status = errMsg.substring(separatorIndex + 1);
+                            switch (status) {
+                                case "wifi":
+                                case "edge":
+                                case "wwan":
+                                    res.networkType = status;
+                                    break;
+                                default:
+                                    res.errMsg = "getNetworkType:fail"
+                            }
+                        }
+                        return res;
+                    };
+                    invoke("getNetworkType", {}, function() {
+                        data._complete = function(res) {
+                            res = formatErrMsg(res);
+                        };
+                        return data;
+                    }());
+                },
+                getLocation: function(data) {
+                    data = data || {};
+                    invoke(eventSdkNameMap.getLocation, {
+                        type: data.type || "wgs84"
+                    }, function() {
+                        data._complete = function(res) {
+                            delete res.type
+                        };
+                        return data;
+                    }());
+                },
+                hideOptionMenu: function(data) {
+                    invoke("hideOptionMenu", {}, data);
+                },
+                showOptionMenu: function(data) {
+                    invoke("showOptionMenu", {}, data);
+                },
+                closeWindow: function(data) {
+                    data = data || {};
+                    invoke("closeWindow", {}, data);
+                },
+                hideMenuItems: function(data) {
+                    invoke("hideMenuItems", {
+                        menuList: data.menuList
+                    }, data);
+                },
+                showMenuItems: function(data) {
+                    invoke("showMenuItems", {
+                        menuList: data.menuList
+                    }, data);
+                },
+                hideAllNonBaseMenuItem: function(data) {
+                    invoke("hideAllNonBaseMenuItem", {}, data);
+                },
+                showAllNonBaseMenuItem: function(data) {
+                    invoke("showAllNonBaseMenuItem", {}, data);
+                },
+                scanQRCode: function(data) {
+                    data = data || {};
+                    invoke("scanQRCode", {
+                        needResult: data.needResult || 0,
+                        scanType: data.scanType || ["qrCode", "barCode"]
+                    }, function() {
+                        data._complete = function(res) {
+                            if (isIOs) {
+                                var resultStr = res.resultStr;
+                                if (resultStr) {
+                                    var result = JSON.parse(resultStr);
+                                    res.resultStr = result && result.scan_code && result.scan_code.scan_result
+                                }
+                            }
+                        };
+                        return data;
+                    }());
+                }
+            },
+            next_iOSLocalImgId = 1,
+            iOS_LocalImgMap = {};
+
+        // 兼容 iOS WKWebview 不支持 localId 直接显示图片的问题
+        document.addEventListener("error", function(event) {
+            if (!isAndroid) {
+                var target = event.target,
+                    targetTagName = target.tagName,
+                    targetSrc = target.src;
+                if ("IMG" == targetTagName || "VIDEO" == targetTagName || "AUDIO" == targetTagName || "SOURCE" == targetTagName) {
+                    var isWxlocalresource = targetSrc.indexOf("wxlocalresource://") != -1;
+                    if (isWxlocalresource) {
+                        event.preventDefault(), event.stopPropagation();
+                        var wxId = target["wx-id"];
+                        wxId || (wxId = next_iOSLocalImgId++, target["wx-id"] = wxId);
+                        if (iOS_LocalImgMap[wxId]) {
+                            return;
+                        }
+                        iOS_LocalImgMap[wxId] = true;
+                        wx.ready(function() {
+                            wx.getLocalImgData({
+                                localId: targetSrc,
+                                success: function(res) {
+                                    target.src = res.localData
+                                }
+                            })
+                        });
+                    }
+                }
+            }
+        }, true);
+        document.addEventListener("load", function(event) {
+            if (!isAndroid) {
+                var target = event.target,
+                    targetTagName = target.tagName,
+                    targetSrc = target.src;
+                if ("IMG" == targetTagName || "VIDEO" == targetTagName || "AUDIO" == targetTagName || "SOURCE" == targetTagName) {
+                    var wxId = target["wx-id"];
+                    wxId && (iOS_LocalImgMap[wxId] = false);
+                }
+            }
+        }, true);
+
+        console.log('set_ready')
+        window._is_coinchat_init = true;
+
+        return isGlobalMode && (global.coinchat = global.jCoinchat = jCoinchat), jCoinchat
+
+    }
+
+
+});
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(3), __webpack_require__(4)(module)))
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports) {
+
+var g;
+
+// This works in non-strict mode
+g = (function() {
+	return this;
+})();
+
+try {
+	// This works if eval is allowed (see CSP)
+	g = g || Function("return this")() || (1,eval)("this");
+} catch(e) {
+	// This works if the window reference is available
+	if(typeof window === "object")
+		g = window;
+}
+
+// g can still be undefined, but nothing to do about it...
+// We return undefined, instead of nothing here, so it's
+// easier to handle this case. if(!global) { ...}
+
+module.exports = g;
+
+
+/***/ }),
+/* 4 */
 /***/ (function(module, exports) {
 
 module.exports = function(originalModule) {
@@ -1670,163 +1531,13 @@ module.exports = function(originalModule) {
 
 
 /***/ }),
-/* 8 */,
-/* 9 */,
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-;(function (root, factory) {
-	if (true) {
-		// CommonJS
-		module.exports = exports = factory(__webpack_require__(5));
-	}
-	else if (typeof define === "function" && define.amd) {
-		// AMD
-		define(["./core"], factory);
-	}
-	else {
-		// Global (browser)
-		factory(root.CryptoJS);
-	}
-}(this, function (CryptoJS) {
-
-	(function () {
-	    // Shortcuts
-	    var C = CryptoJS;
-	    var C_lib = C.lib;
-	    var Base = C_lib.Base;
-	    var C_enc = C.enc;
-	    var Utf8 = C_enc.Utf8;
-	    var C_algo = C.algo;
-
-	    /**
-	     * HMAC algorithm.
-	     */
-	    var HMAC = C_algo.HMAC = Base.extend({
-	        /**
-	         * Initializes a newly created HMAC.
-	         *
-	         * @param {Hasher} hasher The hash algorithm to use.
-	         * @param {WordArray|string} key The secret key.
-	         *
-	         * @example
-	         *
-	         *     var hmacHasher = CryptoJS.algo.HMAC.create(CryptoJS.algo.SHA256, key);
-	         */
-	        init: function (hasher, key) {
-	            // Init hasher
-	            hasher = this._hasher = new hasher.init();
-
-	            // Convert string to WordArray, else assume WordArray already
-	            if (typeof key == 'string') {
-	                key = Utf8.parse(key);
-	            }
-
-	            // Shortcuts
-	            var hasherBlockSize = hasher.blockSize;
-	            var hasherBlockSizeBytes = hasherBlockSize * 4;
-
-	            // Allow arbitrary length keys
-	            if (key.sigBytes > hasherBlockSizeBytes) {
-	                key = hasher.finalize(key);
-	            }
-
-	            // Clamp excess bits
-	            key.clamp();
-
-	            // Clone key for inner and outer pads
-	            var oKey = this._oKey = key.clone();
-	            var iKey = this._iKey = key.clone();
-
-	            // Shortcuts
-	            var oKeyWords = oKey.words;
-	            var iKeyWords = iKey.words;
-
-	            // XOR keys with pad constants
-	            for (var i = 0; i < hasherBlockSize; i++) {
-	                oKeyWords[i] ^= 0x5c5c5c5c;
-	                iKeyWords[i] ^= 0x36363636;
-	            }
-	            oKey.sigBytes = iKey.sigBytes = hasherBlockSizeBytes;
-
-	            // Set initial values
-	            this.reset();
-	        },
-
-	        /**
-	         * Resets this HMAC to its initial state.
-	         *
-	         * @example
-	         *
-	         *     hmacHasher.reset();
-	         */
-	        reset: function () {
-	            // Shortcut
-	            var hasher = this._hasher;
-
-	            // Reset
-	            hasher.reset();
-	            hasher.update(this._iKey);
-	        },
-
-	        /**
-	         * Updates this HMAC with a message.
-	         *
-	         * @param {WordArray|string} messageUpdate The message to append.
-	         *
-	         * @return {HMAC} This HMAC instance.
-	         *
-	         * @example
-	         *
-	         *     hmacHasher.update('message');
-	         *     hmacHasher.update(wordArray);
-	         */
-	        update: function (messageUpdate) {
-	            this._hasher.update(messageUpdate);
-
-	            // Chainable
-	            return this;
-	        },
-
-	        /**
-	         * Finalizes the HMAC computation.
-	         * Note that the finalize operation is effectively a destructive, read-once operation.
-	         *
-	         * @param {WordArray|string} messageUpdate (Optional) A final message update.
-	         *
-	         * @return {WordArray} The HMAC.
-	         *
-	         * @example
-	         *
-	         *     var hmac = hmacHasher.finalize();
-	         *     var hmac = hmacHasher.finalize('message');
-	         *     var hmac = hmacHasher.finalize(wordArray);
-	         */
-	        finalize: function (messageUpdate) {
-	            // Shortcut
-	            var hasher = this._hasher;
-
-	            // Compute HMAC
-	            var innerHash = hasher.finalize(messageUpdate);
-	            hasher.reset();
-	            var hmac = hasher.finalize(this._oKey.clone().concat(innerHash));
-
-	            return hmac;
-	        }
-	    });
-	}());
-
-
-}));
-
-/***/ }),
-/* 11 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 ;(function (root, factory, undef) {
 	if (true) {
 		// CommonJS
-		module.exports = exports = factory(__webpack_require__(5), __webpack_require__(12), __webpack_require__(10));
+		module.exports = exports = factory(__webpack_require__(0), __webpack_require__(6), __webpack_require__(7));
 	}
 	else if (typeof define === "function" && define.amd) {
 		// AMD
@@ -1843,13 +1554,13 @@ module.exports = function(originalModule) {
 }));
 
 /***/ }),
-/* 12 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 ;(function (root, factory) {
 	if (true) {
 		// CommonJS
-		module.exports = exports = factory(__webpack_require__(5));
+		module.exports = exports = factory(__webpack_require__(0));
 	}
 	else if (typeof define === "function" && define.amd) {
 		// AMD
@@ -2047,15 +1758,161 @@ module.exports = function(originalModule) {
 }));
 
 /***/ }),
-/* 13 */,
-/* 14 */,
-/* 15 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 ;(function (root, factory) {
 	if (true) {
 		// CommonJS
-		module.exports = exports = factory(__webpack_require__(5));
+		module.exports = exports = factory(__webpack_require__(0));
+	}
+	else if (typeof define === "function" && define.amd) {
+		// AMD
+		define(["./core"], factory);
+	}
+	else {
+		// Global (browser)
+		factory(root.CryptoJS);
+	}
+}(this, function (CryptoJS) {
+
+	(function () {
+	    // Shortcuts
+	    var C = CryptoJS;
+	    var C_lib = C.lib;
+	    var Base = C_lib.Base;
+	    var C_enc = C.enc;
+	    var Utf8 = C_enc.Utf8;
+	    var C_algo = C.algo;
+
+	    /**
+	     * HMAC algorithm.
+	     */
+	    var HMAC = C_algo.HMAC = Base.extend({
+	        /**
+	         * Initializes a newly created HMAC.
+	         *
+	         * @param {Hasher} hasher The hash algorithm to use.
+	         * @param {WordArray|string} key The secret key.
+	         *
+	         * @example
+	         *
+	         *     var hmacHasher = CryptoJS.algo.HMAC.create(CryptoJS.algo.SHA256, key);
+	         */
+	        init: function (hasher, key) {
+	            // Init hasher
+	            hasher = this._hasher = new hasher.init();
+
+	            // Convert string to WordArray, else assume WordArray already
+	            if (typeof key == 'string') {
+	                key = Utf8.parse(key);
+	            }
+
+	            // Shortcuts
+	            var hasherBlockSize = hasher.blockSize;
+	            var hasherBlockSizeBytes = hasherBlockSize * 4;
+
+	            // Allow arbitrary length keys
+	            if (key.sigBytes > hasherBlockSizeBytes) {
+	                key = hasher.finalize(key);
+	            }
+
+	            // Clamp excess bits
+	            key.clamp();
+
+	            // Clone key for inner and outer pads
+	            var oKey = this._oKey = key.clone();
+	            var iKey = this._iKey = key.clone();
+
+	            // Shortcuts
+	            var oKeyWords = oKey.words;
+	            var iKeyWords = iKey.words;
+
+	            // XOR keys with pad constants
+	            for (var i = 0; i < hasherBlockSize; i++) {
+	                oKeyWords[i] ^= 0x5c5c5c5c;
+	                iKeyWords[i] ^= 0x36363636;
+	            }
+	            oKey.sigBytes = iKey.sigBytes = hasherBlockSizeBytes;
+
+	            // Set initial values
+	            this.reset();
+	        },
+
+	        /**
+	         * Resets this HMAC to its initial state.
+	         *
+	         * @example
+	         *
+	         *     hmacHasher.reset();
+	         */
+	        reset: function () {
+	            // Shortcut
+	            var hasher = this._hasher;
+
+	            // Reset
+	            hasher.reset();
+	            hasher.update(this._iKey);
+	        },
+
+	        /**
+	         * Updates this HMAC with a message.
+	         *
+	         * @param {WordArray|string} messageUpdate The message to append.
+	         *
+	         * @return {HMAC} This HMAC instance.
+	         *
+	         * @example
+	         *
+	         *     hmacHasher.update('message');
+	         *     hmacHasher.update(wordArray);
+	         */
+	        update: function (messageUpdate) {
+	            this._hasher.update(messageUpdate);
+
+	            // Chainable
+	            return this;
+	        },
+
+	        /**
+	         * Finalizes the HMAC computation.
+	         * Note that the finalize operation is effectively a destructive, read-once operation.
+	         *
+	         * @param {WordArray|string} messageUpdate (Optional) A final message update.
+	         *
+	         * @return {WordArray} The HMAC.
+	         *
+	         * @example
+	         *
+	         *     var hmac = hmacHasher.finalize();
+	         *     var hmac = hmacHasher.finalize('message');
+	         *     var hmac = hmacHasher.finalize(wordArray);
+	         */
+	        finalize: function (messageUpdate) {
+	            // Shortcut
+	            var hasher = this._hasher;
+
+	            // Compute HMAC
+	            var innerHash = hasher.finalize(messageUpdate);
+	            hasher.reset();
+	            var hmac = hasher.finalize(this._oKey.clone().concat(innerHash));
+
+	            return hmac;
+	        }
+	    });
+	}());
+
+
+}));
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+;(function (root, factory) {
+	if (true) {
+		// CommonJS
+		module.exports = exports = factory(__webpack_require__(0));
 	}
 	else if (typeof define === "function" && define.amd) {
 		// AMD
@@ -2187,6 +2044,143 @@ module.exports = function(originalModule) {
 	return CryptoJS.enc.Base64;
 
 }));
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports) {
+
+var bridge = {
+    default:this,// for typescript
+    call: function (method, args, cb) {
+        var ret = '';
+        if (typeof args == 'function') {
+            cb = args;
+            args = {};
+        }
+        var arg={data:args===undefined?null:args}
+        if (typeof cb == 'function') {
+            var cbName = 'dscb' + window.dscb++;
+            window[cbName] = cb;
+            arg['_dscbstub'] = cbName;
+        }
+        arg = JSON.stringify(arg)
+
+        //if in webview that dsBridge provided, call!
+        if(window._dsbridge){
+           ret=  _dsbridge.call(method, arg)
+        }else if(window._dswk||navigator.userAgent.indexOf("_dsbridge")!=-1){
+           ret = prompt("_dsbridge=" + method, arg);
+        }
+
+       return  JSON.parse(ret||'{}').data
+    },
+    register: function (name, fun, asyn) {
+        var q = asyn ? window._dsaf : window._dsf
+        if (!window._dsInit) {
+            window._dsInit = true;
+            //notify native that js apis register successfully on next event loop
+            setTimeout(function () {
+                bridge.call("_dsb.dsinit");
+            }, 0)
+        }
+        if (typeof fun == "object") {
+            q._obs[name] = fun;
+        } else {
+            q[name] = fun
+        }
+    },
+    registerAsyn: function (name, fun) {
+        this.register(name, fun, true);
+    },
+    hasNativeMethod: function (name, type) {
+        return this.call("_dsb.hasNativeMethod", {name: name, type:type||"all"});
+    },
+    disableJavascriptDialogBlock: function (disable) {
+        this.call("_dsb.disableJavascriptDialogBlock", {
+            disable: disable !== false
+        })
+    }
+};
+
+!function () {
+    if (window._dsf) return;
+    var ob = {
+        _dsf: {
+            _obs: {}
+        },
+        _dsaf: {
+            _obs: {}
+        },
+        dscb: 0,
+        dsBridge: bridge,
+        close: function () {
+            bridge.call("_dsb.closePage")
+        },
+        _handleMessageFromNative: function (info) {
+            var arg = JSON.parse(info.data);
+            var ret = {
+                id: info.callbackId,
+                complete: true
+            }
+            var f = this._dsf[info.method];
+            var af = this._dsaf[info.method]
+            var callSyn = function (f, ob) {
+                ret.data = f.apply(ob, arg)
+                bridge.call("_dsb.returnValue", ret)
+            }
+            var callAsyn = function (f, ob) {
+                arg.push(function (data, complete) {
+                    ret.data = data;
+                    ret.complete = complete!==false;
+                    bridge.call("_dsb.returnValue", ret)
+                })
+                f.apply(ob, arg)
+            }
+            if (f) {
+                callSyn(f, this._dsf);
+            } else if (af) {
+                callAsyn(af, this._dsaf);
+            } else {
+                //with namespace
+                var name = info.method.split('.');
+                if (name.length<2) return;
+                var method=name.pop();
+                var namespace=name.join('.')
+                var obs = this._dsf._obs;
+                var ob = obs[namespace] || {};
+                var m = ob[method];
+                if (m && typeof m == "function") {
+                    callSyn(m, ob);
+                    return;
+                }
+                obs = this._dsaf._obs;
+                ob = obs[namespace] || {};
+                m = ob[method];
+                if (m && typeof m == "function") {
+                    callAsyn(m, ob);
+                    return;
+                }
+            }
+        }
+    }
+    for (var attr in ob) {
+        window[attr] = ob[attr]
+    }
+    bridge.register("_hasJavascriptMethod", function (method, tag) {
+         var name = method.split('.')
+         if(name.length<2) {
+           return !!(_dsf[name]||_dsaf[name])
+         }else{
+           // with namespace
+           var method=name.pop()
+           var namespace=name.join('.')
+           var ob=_dsf._obs[namespace]||_dsaf._obs[namespace]
+           return ob&&!!ob[method]
+         }
+    })
+}();
+
+module.exports = bridge;
 
 /***/ })
 /******/ ]);
