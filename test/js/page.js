@@ -35,6 +35,7 @@ function getLoginUserInfo() {
     coinchat.getLoginUserInfo({
         partner_no  : '1528949462419631', // 必填，唯一标识
         timestamp: timestamp, // 必填，生成签名的时间戳
+        nonce    : timestamp,
         success     : function(res) {
             console.log('this is a function success',res)
         }
