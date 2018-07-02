@@ -23,7 +23,7 @@ COINCHAT JS SDK文档
 >   
     coinchat.config({
         debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
-        api_key  : 'v1ymtpfgaautzakupen4xocrnnvnxwjz', // 必填，商户的唯一标识
+        partner_no  : '1528949462419631"', // 必填，唯一标识
         timestamp: timestamp, // 必填，生成签名的时间戳
         nonce    : 'nonce_str', // 必填，生成签名的随机串
         sign     : 'ad4b36a22f78c6d9409dd21644702cc6ec9c0b08a9d1b00cd0c2436bd9fbd58f'
