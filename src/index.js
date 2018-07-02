@@ -18,6 +18,18 @@
             execute(sdkName, res, handler)
         };
         console.log('callback',callback)
+
+        console.log('global_data',global);
+
+        var str=dsBridge.call("testSyn","testSyn");
+
+        //Call asynchronously
+        dsBridge.call("testAsyn","testAsyn", function (v) {
+          alert(v);
+        })
+
+        console.log('新方法调用invoke_finished');
+
         global.CoinchatJSBridge ? CoinchatJSBridge.invoke(sdkName, 'this is params', callback) : logEventInfo(sdkName, handler);
     }
 
@@ -492,6 +504,23 @@
                 }
             }
         }, true);
+
+        console.log('set_ready')
+        if (window.WebViewJavascriptBridge) {
+            //do your work here
+            console.log('has window.WebViewJavascriptBridge')
+            jCoinchat.ready();
+        } else {
+            document.addEventListener(
+                'WebViewJavascriptBridgeReady'
+                , function() {
+                    //do your work here
+                    console.log('--------------------WebViewJavascriptBridgeReady')
+                    jCoinchat.ready();
+                },
+                false
+            );
+        }
 
         return isGlobalMode && (global.coinchat = global.jCoinchat = jCoinchat), jCoinchat
 
