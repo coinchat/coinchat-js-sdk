@@ -1,6 +1,8 @@
-#COINCHAT JS SDK文档
+COINCHAT JS SDK文档
+====
 
-##如何使用
+如何使用
+----
 
 注意：cmd和amd的加载方式将在近期给出，暂只支持普通的加载方式。
 
@@ -8,7 +10,8 @@
 2. 在网页前端调用coinchat.config()接口来执行config动作。
 3. 完成后在coinchat.ready()中传入config完成后的执行代码。
 
-##示例
+示例
+----
 
 1.网页引入JS文件
 >       <script src="../src/build/js/index.js"></script>
@@ -37,9 +40,10 @@
         });
     });
     
-##JS-SDK方法
+JS-SDK方法
+----
 
-###获得登录用户信息
+###获得登录用户信息###
 coinchat.getLoginUserInfo
 
 
@@ -51,11 +55,11 @@ coinchat.getLoginUserInfo
         });
     });
     
-###支付订单
+###支付订单###
 coinchat.payOrder
 
 
     
-###支付订单（调用智能合约）
+###支付订单（调用智能合约）###
 coinchat.payOrderWithContract
 
