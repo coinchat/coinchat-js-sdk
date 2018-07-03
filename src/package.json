@@ -28,6 +28,7 @@
     "webpack-build-notifier": "^0.1.28"
   },
   "dependencies": {
+    "clone": "^2.1.1",
     "crypto-js": "^3.1.9-1",
     "dsbridge": "^3.1.3"
   },

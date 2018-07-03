@@ -12,20 +12,18 @@ if (currentTarget == "build") { // 发布模式
     debug = true, devServer = false, minimize = false, serverEnv = 'develop'; 
 } else if (currentTarget == "dev-watch") { // 热更新模式
     debug = true, devServer = true, minimize = false, serverEnv  = 'develop'; 
-} else if (currentTarget == "test-build") { // 测试服务器模式
-    debug = false, devServer = false, minimize = true, serverEnv  = 'test'; 
 }
-
-
 //准备开始配置CONFIG
 var webpack = require("webpack");
 var path = require('path')
-// var ExtractTextPlugin = require("extract-text-webpack-plugin");
+
 var WebpackBuildNotifierPlugin = require('webpack-build-notifier');
 var CleanPlugin = require('clean-webpack-plugin')
 
 
 var ROOT_PATH   = path.resolve(__dirname);
+var DEV_PATH    = path.resolve(ROOT_PATH, 'src');
+var MODULE_PATH = path.resolve(ROOT_PATH, 'node_modules');
 
 console.log('当前的状态',currentTarget)
 if (currentTarget == "build") {
@@ -33,42 +31,27 @@ if (currentTarget == "build") {
     var plugins = [
         new CleanPlugin(['product/*.js', 'product/css/*.css','product/js/*.js']),
     ]
-    // var publicPath = '//cdn.static.coinchat.im/web-static/js/react/product/'
-    // var asset_json_name = 'assets_product.json';
-}else if (currentTarget == 'test-build') {
-    // var BUILD_PATH = path.resolve(ROOT_PATH, 'test');
-    // var plugins = [
-    //     new CleanPlugin(['test/*.js', 'test/css/*.css','test/js/*.js']),
-    // ]
-    // var publicPath = '//static.chat.jianda.com/web-static/js/react/test/'
-    // var asset_json_name = 'assets_test.json';
 }else {
     var BUILD_PATH = path.resolve(ROOT_PATH, 'build');
     var plugins = []
-    // var publicPath = 'http://static.coinchat.com/web-static/js/react/build/'
-    // var asset_json_name = 'assets.json';
 }
 
 
-var DEV_PATH    = path.resolve(ROOT_PATH, 'src');
-var MODULE_PATH = path.resolve(ROOT_PATH, 'node_modules');
-
 
 var common_plugins = [
-    new webpack.DefinePlugin({
-        'process.env': {
-            'NODE_ENV': JSON.stringify(serverEnv)
-        }
-    }),
-    new webpack.optimize.OccurrenceOrderPlugin(),
-    new webpack.optimize.AggressiveMergingPlugin(),      //合并块
-    new WebpackBuildNotifierPlugin({
-        title: "coinchat_web 项目 webpack 打包编译完成",
-        logo: path.resolve("~/../../..//favicon.png"),
-        //suppressSuccess: true
-    }),
+    // new webpack.DefinePlugin({
+    //     'process.env': {
+    //         'NODE_ENV': JSON.stringify(serverEnv)
+    //     }
+    // }),
+    // new webpack.optimize.OccurrenceOrderPlugin(),
+    // new webpack.optimize.AggressiveMergingPlugin(),      //合并块
+    // new WebpackBuildNotifierPlugin({
+    //     title: "coinchat_web 项目 webpack 打包编译完成",
+    //     logo: path.resolve("~/../../..//favicon.png"),
+    //     //suppressSuccess: true
+    // }),
 ];
-
 
 //把plugin放入
 common_plugins.map(one=>{
@@ -95,11 +78,17 @@ if (minimize) {
 
 
 var clientConfig = {
+    entry : {
+        'index'     :  './index.js',
+    },
     output: {
         path:  BUILD_PATH,
-        filename: (debug) ? 'js/[name].js' : 'js/[name]-[chunkhash:8].js',
-        // publicPath : publicPath
+        filename: (debug) ? 'js/[name].js' : 'js/[name].min.js',
+        libraryTarget: 'umd',
+        library: "coinchat",
+        libraryExport: "default"
     },
+    devtool: 'source-map',
     module: {
         loaders: [
             {
@@ -115,13 +104,5 @@ var clientConfig = {
     },
     plugins: plugins,
 };
-
-
-
-clientConfig['target'] = 'web';
-clientConfig['entry'] = {
-    'index'     :  './index.js',
-};
-
 
 module.exports = [ clientConfig ];
