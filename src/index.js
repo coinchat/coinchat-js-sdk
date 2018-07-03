@@ -239,24 +239,28 @@ if (!global.jCoinchat) {
                 console.log('settings',settings)
 
                 invoke('config', data, function() {
-                    console.log('callback',callback)
-                    callback._complete = function(res) {
-                        // delete res.type
-                        console.log('调用完成');
+                    handler._complete = function(data) {
+                        loadTimeInfo.preVerifyEndTime = getTime();
+                        resource.state = 1;
+                        resource.data = data;
                     };
-                    callback._success = function(res) {
-                        // delete res.type
-                        console.log('调用成功');
+                    handler.success = function(data) {
+                        info.isPreVerifyOk = 0;
                     };
-                    callback._cancel = function(res) {
-                        // delete res.type
-                        console.log('调用取消');
+                    handler.fail = function(data) {
+                        handler._fail ? handler._fail(data) : resource.state = -1;
                     };
-                    callback._fail = function(res) {
-                        // delete res.type
-                        console.log('调用失败');
+                    var _completes = handler._completes;
+                    _completes.push(function() {
+                        report();
+                    });
+                    handler.complete = function(data) {
+                        for (var i = 0, length = _completes.length; length > i; ++i) {
+                            _completes[i]();
+                        }
                     };
-                    return callback;
+                    handler._completes = [];
+                    return handler;
                 }());
             },
 
@@ -265,6 +269,7 @@ if (!global.jCoinchat) {
                     callback();
                 }else {
                     handler._completes.push(callback);
+                    console.log('添加到等待执行的列表',handler);
                 }
             },
 

@@ -4,11 +4,19 @@ COINCHAT JS SDK文档
 如何使用
 ----
 
-注意：cmd和amd的加载方式将在近期给出，暂只支持普通的加载方式。
-
+传统用法
 1. 在网页中引入./src/build/index.js的JS文件。
 2. 在网页前端调用coinchat.config()接口来执行config动作。
 3. 完成后在coinchat.ready()中传入config完成后的执行代码。
+
+模块引入
+
+Npm install 方法，晚点会增加npm install的安装方案。
+
+目前可以通过
+import {coinchat} from './src/build/index.js' 来加载coinchat的对象。
+
+
 
 示例
 ----

@@ -1,0 +1,37 @@
+{
+  "name": "Coinchat-JS-SDK",
+  "version": "0.0.1",
+  "description": "Coinchat JS SDK",
+  "main": "index.js",
+  "author": "dreamcog",
+  "license": "ISC",
+  "devDependencies": {
+    "assets-webpack-plugin": "^3.5.1",
+    "babel": "^6.23.0",
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^6.4.1",
+    "babel-plugin-antd": "^0.5.1",
+    "babel-plugin-import": "^1.6.2",
+    "babel-plugin-root-import": "^5.1.0",
+    "babel-plugin-transform-decorators-legacy": "^1.3.4",
+    "babel-polyfill": "^6.13.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-es2017": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "clean-webpack-plugin": "^0.1.16",
+    "uglifyjs-webpack-plugin": "^1.1.4",
+    "webpack": "^3.12.0",
+    "webpack-build-notifier": "^0.1.28"
+  },
+  "dependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack  --profile --progress --colors --display-error-details",
+    "dev": "webpack  --display-modules --profile --progress --colors --display-error-details",
+    "dev-watch": "webpack --watch --progress"
+  }
+}
