@@ -47,7 +47,7 @@ function getPayment() {
     .then(json => {
 
         var timestamp = Math.floor(new Date().getTime() / 1000);
-        coinchat.entrustPay({'deposit_no':json.data.deposit.deposit_no,'timestamp':timestamp,'nonce':timestamp})
+        coinchat.entrustPay({'deposit_no':json.data.deposit.deposit_no,'timestamp':timestamp,'nonce':timestamp,'partner_no':'1528949462419631'})
     })
 }
 
