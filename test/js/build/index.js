@@ -886,6 +886,47 @@ __WEBPACK_IMPORTED_MODULE_0__index_js___default.a.ready(function(){
     console.log('this is coinchat ready callback2');
 })
 
+//开始config
+// var timestamp = Math.floor(new Date().getTime() / 1000);
+// coinchat.config({
+//     debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+//     partner_no  : '1528949462419631', // 必填，唯一标识
+//     timestamp: timestamp, // 必填，生成签名的时间戳
+//     nonce    : timestamp, // 必填，生成签名的随机串
+// });
+
+console.log('fetch开始');
+function getPayment() {
+    var form = new FormData();
+    form.append('partner_no','1528949462419631');
+    form.append('user_id','pRzhLlxJniGvsVjgI75x2U1eRKEQqEuyR');
+    form.append('eth_fee','0.001');
+    form.append('coin','eth');
+    form.append('coin_amount','1.2');
+    form.append('remark','测试支付');
+    form.append('debug_skip_partner_signture','1');
+
+    var url = 'http://api.coinchat.com/v1/entrust_wallet/deposit/add.html'
+    fetch(url,{
+        credentials: 'same-origin',
+        method: 'POST', 
+        body: form 
+    }).then(response => {
+        // console.log('typeof',typeof response,response,);
+        if (typeof response == 'object' && !response.json) {
+            return response
+        }else {
+            return response.json()
+        }
+    })
+    .then(json => {
+        console.log('json',json)
+
+        __WEBPACK_IMPORTED_MODULE_0__index_js___default.a.entrustPay({'deposit_no':json.data.deposit.deposit_no})
+    })
+}
+
+__WEBPACK_IMPORTED_MODULE_0__index_js___default.a.getPayment = getPayment
 /* harmony default export */ __webpack_exports__["default"] = (__WEBPACK_IMPORTED_MODULE_0__index_js___default.a);
 
 /***/ }),
@@ -915,10 +956,8 @@ var clone = __webpack_require__(10);
 
 //签名方法
 function getHashByData(data,api_secret = '9cltjeoremroutzowcucjcl9y1j5tj4j') {
-
     // var api_key = "v1ymtpfgaautzakupen4xocrnnvnxwjz";
     // var api_secret = '9cltjeoremroutzowcucjcl9y1j5tj4j';
-
     console.log('要签名的数据是',data);
     var myObj = data,
       keys = [],
@@ -953,8 +992,8 @@ function invoke(sdkName, args, handler) {
 
     //Call asynchronously
     dsBridge.call("invoke",{'sdkname':sdkName,'args':args}, function (res) {
-        console.log('调用成功');
-        alert(res);
+        console.log('调用成功',res);
+        // alert(res);
         execute(sdkName, res, handler)
     })
 
@@ -969,27 +1008,34 @@ function on(sdkName, listener, handler) {
 
 
 function execute(sdkName, res, handler) {
-    "openEnterpriseChat" == sdkName && (res.errCode = res.err_code);
-    delete res.err_code, delete res.err_desc, delete res.err_detail;
-    var errMsg = res.errMsg;
-    errMsg || (errMsg = res.err_msg, delete res.err_msg, errMsg = formatErrMsg(sdkName, errMsg), res.errMsg = errMsg);
-    handler = handler || {};
-    handler._complete && (handler._complete(res), delete handler._complete);
-    errMsg = res.errMsg || "";
-    settings.debug && !handler.isInnerInvoke && alert(JSON.stringify(res));
-    var separatorIndex = errMsg.indexOf(":"),
-        status = errMsg.substring(separatorIndex + 1);
+
+    // "openEnterpriseChat" == sdkName && (res.errCode = res.err_code);
+    // delete res.err_code, delete res.err_desc, delete res.err_detail;
+    // var errMsg = res.errMsg;
+    // errMsg || (errMsg = res.err_msg, delete res.err_msg, errMsg = formatErrMsg(sdkName, errMsg), res.errMsg = errMsg);
+    // handler = handler || {};
+    // handler._complete && (handler._complete(res), delete handler._complete);
+    // errMsg = res.errMsg || "";
+    // settings.debug && !handler.isInnerInvoke && alert(JSON.stringify(res));
+    // var separatorIndex = errMsg.indexOf(":"),
+    //     status = errMsg.substring(separatorIndex + 1);
+    var resObj = JSON.parse(res);
+    var status = resObj.status;
+
+    console.log('resObj',resObj);
+    console.log('status',status);
+
     switch (status) {
-        case "ok":
-            handler.success && handler.success(res);
+        case "success":
+            handler.success && handler.success(resObj);
             break;
         case "cancel":
-            handler.cancel && handler.cancel(res);
+            handler.cancel && handler.cancel(resObj);
             break;
         default:
-            handler.fail && handler.fail(res)
+            handler.fail && handler.fail(resObj)
     }
-    handler.complete && handler.complete(res)
+    handler.complete && handler.complete(resObj)
 }
 
 // function addVerifyInfo(data) {
@@ -1146,20 +1192,25 @@ if (!global.jCoinchat) {
 
                 invoke('config', data, function() {
                     handler._complete = function(data) {
+                        console.log('config_1');
                         loadTimeInfo.preVerifyEndTime = getTime();
                         resource.state = 1;
                         resource.data = data;
                     };
                     handler.success = function(data) {
+                        console.log('config_success');
                         info.isPreVerifyOk = 0;
                     };
                     handler.fail = function(data) {
+                        console.log('config_fail');
                         handler._fail ? handler._fail(data) : resource.state = -1;
                     };
+                   
                     var _completes = handler._completes;
-                    _completes.push(function() {
-                        report();
-                    });
+                    // _completes.push(function() {
+                    //     report();
+                    // });
+                   
                     handler.complete = function(data) {
                         for (var i = 0, length = _completes.length; length > i; ++i) {
                             _completes[i]();
@@ -1246,6 +1297,41 @@ if (!global.jCoinchat) {
                     data._fail = function(res) {
                         // delete res.type
                         console.log('调用失败');
+                    };
+                    return data;
+                }());
+            },
+            getVersion : function() {
+                console.log('uaLowerCase',uaLowerCase);
+                console.log('coinchatVersion',coinchatVersion)
+            },
+            entrustPay :function(res) {
+                var data = {};
+                invoke('entrustPay', res, function() {
+                    data._complete = function(res) {
+                        // delete res.type
+                        console.log('调用完成');
+                        if (data.complete) {
+                            data.complete(res);
+                        }
+                    };
+                    data._success = function(res) {
+                        // delete res.type
+                        console.log('调用成功');
+                        if (data.success) {
+                            data.success(res);
+                        }
+                    };
+                    data._cancel = function(res) {
+                        // delete res.type
+                        console.log('调用取消');
+                    };
+                    data._fail = function(res) {
+                        // delete res.type
+                        console.log('调用失败');
+                        if (data.fail) {
+                            data.fail(res);
+                        }
                     };
                     return data;
                 }());
@@ -1405,46 +1491,7 @@ if (!global.jCoinchat) {
         iOS_LocalImgMap = {};
     }
 
-    // // 兼容 iOS WKWebview 不支持 localId 直接显示图片的问题
-    // document.addEventListener("error", function(event) {
-    //     if (!isAndroid) {
-    //         var target = event.target,
-    //             targetTagName = target.tagName,
-    //             targetSrc = target.src;
-    //         if ("IMG" == targetTagName || "VIDEO" == targetTagName || "AUDIO" == targetTagName || "SOURCE" == targetTagName) {
-    //             var isWxlocalresource = targetSrc.indexOf("wxlocalresource://") != -1;
-    //             if (isWxlocalresource) {
-    //                 event.preventDefault(), event.stopPropagation();
-    //                 var wxId = target["wx-id"];
-    //                 wxId || (wxId = next_iOSLocalImgId++, target["wx-id"] = wxId);
-    //                 if (iOS_LocalImgMap[wxId]) {
-    //                     return;
-    //                 }
-    //                 iOS_LocalImgMap[wxId] = true;
-    //                 wx.ready(function() {
-    //                     wx.getLocalImgData({
-    //                         localId: targetSrc,
-    //                         success: function(res) {
-    //                             target.src = res.localData
-    //                         }
-    //                     })
-    //                 });
-    //             }
-    //         }
-    //     }
-    // }, true);
-    // document.addEventListener("load", function(event) {
-    //     if (!isAndroid) {
-    //         var target = event.target,
-    //             targetTagName = target.tagName,
-    //             targetSrc = target.src;
-    //         if ("IMG" == targetTagName || "VIDEO" == targetTagName || "AUDIO" == targetTagName || "SOURCE" == targetTagName) {
-    //             var wxId = target["wx-id"];
-    //             wxId && (iOS_LocalImgMap[wxId] = false);
-    //         }
-    //     }
-    // }, true);
-
+ 
     console.log('set_ready')
     /* harmony default export */ __webpack_exports__["default"] = (jCoinchat);
 
