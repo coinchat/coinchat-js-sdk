@@ -920,9 +920,9 @@ function getPayment() {
         }
     })
     .then(json => {
-        console.log('json',json)
 
-        __WEBPACK_IMPORTED_MODULE_0__index_js___default.a.entrustPay({'deposit_no':json.data.deposit.deposit_no})
+        var timestamp = Math.floor(new Date().getTime() / 1000);
+        __WEBPACK_IMPORTED_MODULE_0__index_js___default.a.entrustPay({'deposit_no':json.data.deposit.deposit_no,'timestamp':timestamp,'nonce':timestamp})
     })
 }
 
