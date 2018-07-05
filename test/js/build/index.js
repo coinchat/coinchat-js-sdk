@@ -1025,10 +1025,15 @@ function invoke(sdkName, args, handler) {
     //Call asynchronously
     dsBridge.call("invoke",{'sdkname':sdkName,'args':args}, function (res) {
         console.log('调用成功',res);
-        // alert(res);
         execute(sdkName, res, handler)
     })
 
+}
+
+
+function getLanguage() {
+    //Call asynchronously
+    return dsBridge.call("getLanguage")
 }
 
 function on(sdkName, listener, handler) {
@@ -1335,6 +1340,7 @@ if (!global.jCoinchat) {
                 }());
             },
             getVersion : function() {
+                console.log('uaLowerCase',uaLowerCase)
                 console.log('coinchatVersion',coinchatVersion)
                 return coinchatVersion;
             },
@@ -1376,155 +1382,11 @@ if (!global.jCoinchat) {
                 }());
             },
 
-            // onMenuShareTimeline: function(data) {
-            //     on(eventSdkNameMap.onMenuShareTimeline, {
-            //         complete: function() {
-            //             invoke("shareTimeline", {
-            //                 title: data.title || title,
-            //                 desc: data.title || title,
-            //                 img_url: data.imgUrl || "",
-            //                 link: data.link || location.href,
-            //                 type: data.type || "link",
-            //                 data_url: data.dataUrl || ""
-            //             }, data);
-            //         }
-            //     }, data);
-            // },
-            // onMenuShareAppMessage: function(data) {
-            //     on(eventSdkNameMap.onMenuShareAppMessage, {
-            //         complete: function() {
-            //             invoke("sendAppMessage", {
-            //                 title: data.title || title,
-            //                 desc: data.desc || "",
-            //                 link: data.link || location.href,
-            //                 img_url: data.imgUrl || "",
-            //                 type: data.type || "link",
-            //                 data_url: data.dataUrl || ""
-            //             }, data);
-            //         }
-            //     }, data);
-            // },
-            // onMenuShareQQ: function(data) {
-            //     on(eventSdkNameMap.onMenuShareQQ, {
-            //         complete: function() {
-            //             invoke("shareQQ", {
-            //                 title: data.title || title,
-            //                 desc: data.desc || "",
-            //                 img_url: data.imgUrl || "",
-            //                 link: data.link || location.href
-            //             }, data);
-            //         }
-            //     }, data);
-            // },
-            // onMenuShareWeibo: function(data) {
-            //     on(eventSdkNameMap.onMenuShareWeibo, {
-            //         complete: function() {
-            //             invoke("shareWeiboApp", {
-            //                 title: data.title || title,
-            //                 desc: data.desc || "",
-            //                 img_url: data.imgUrl || "",
-            //                 link: data.link || location.href
-            //             }, data);
-            //         }
-            //     }, data);
-            // },
-            // onMenuShareQZone: function(data) {
-            //     on(eventSdkNameMap.onMenuShareQZone, {
-            //         complete: function() {
-            //             invoke("shareQZone", {
-            //                 title: data.title || title,
-            //                 desc: data.desc || "",
-            //                 img_url: data.imgUrl || "",
-            //                 link: data.link || location.href
-            //             }, data);
-            //         }
-            //     }, data);
-            // },
-            // getNetworkType: function(data) {
-            //     var formatErrMsg = function(res) {
-            //         var errMsg = res.errMsg;
-            //         res.errMsg = "getNetworkType:ok";
-            //         var subtype = res.subtype;
-            //         delete res.subtype
-            //         if (subtype)
-            //             res.networkType = subtype;
-            //         else {
-            //             var separatorIndex = errMsg.indexOf(":"),
-            //                 status = errMsg.substring(separatorIndex + 1);
-            //             switch (status) {
-            //                 case "wifi":
-            //                 case "edge":
-            //                 case "wwan":
-            //                     res.networkType = status;
-            //                     break;
-            //                 default:
-            //                     res.errMsg = "getNetworkType:fail"
-            //             }
-            //         }
-            //         return res;
-            //     };
-            //     invoke("getNetworkType", {}, function() {
-            //         data._complete = function(res) {
-            //             res = formatErrMsg(res);
-            //         };
-            //         return data;
-            //     }());
-            // },
-            // getLocation: function(data) {
-            //     data = data || {};
-            //     invoke(eventSdkNameMap.getLocation, {
-            //         type: data.type || "wgs84"
-            //     }, function() {
-            //         data._complete = function(res) {
-            //             delete res.type
-            //         };
-            //         return data;
-            //     }());
-            // },
-            // hideOptionMenu: function(data) {
-            //     invoke("hideOptionMenu", {}, data);
-            // },
-            // showOptionMenu: function(data) {
-            //     invoke("showOptionMenu", {}, data);
-            // },
-            // closeWindow: function(data) {
-            //     data = data || {};
-            //     invoke("closeWindow", {}, data);
-            // },
-            // hideMenuItems: function(data) {
-            //     invoke("hideMenuItems", {
-            //         menuList: data.menuList
-            //     }, data);
-            // },
-            // showMenuItems: function(data) {
-            //     invoke("showMenuItems", {
-            //         menuList: data.menuList
-            //     }, data);
-            // },
-            // hideAllNonBaseMenuItem: function(data) {
-            //     invoke("hideAllNonBaseMenuItem", {}, data);
-            // },
-            // showAllNonBaseMenuItem: function(data) {
-            //     invoke("showAllNonBaseMenuItem", {}, data);
-            // },
-            // scanQRCode: function(data) {
-            //     data = data || {};
-            //     invoke("scanQRCode", {
-            //         needResult: data.needResult || 0,
-            //         scanType: data.scanType || ["qrCode", "barCode"]
-            //     }, function() {
-            //         data._complete = function(res) {
-            //             if (isIOs) {
-            //                 var resultStr = res.resultStr;
-            //                 if (resultStr) {
-            //                     var result = JSON.parse(resultStr);
-            //                     res.resultStr = result && result.scan_code && result.scan_code.scan_result
-            //                 }
-            //             }
-            //         };
-            //         return data;
-            //     }());
-            // }
+            getLanguage : function() {
+                console.log('getLanguage',getLanguage())
+                return getLanguage();
+            },
+
         },
         next_iOSLocalImgId = 1,
         iOS_LocalImgMap = {};
