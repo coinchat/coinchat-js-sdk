@@ -912,7 +912,6 @@ function getUserInfo() {
         'success' : function(res) {
             console.log('获得用户成功',res)
             user = res['data'];
-            console.log('user1',user)
         },
         'fail'    : function(res) {
             console.log('获得用户失败',res);
@@ -923,9 +922,17 @@ __WEBPACK_IMPORTED_MODULE_0__index_js___default.a.getUserInfo = getUserInfo
 
 function getPayment() {
     
-    console.log('user',user)
     if (!user.user_partner_id) {
-        console.log('需要先调用getLoginUser获得用户ID才能下单');
+        console.log('需要先调用getLoginUser获得用户ID才能下单',user);
+        return;
+    }
+
+
+    var coin_amount = document.getElementById("amount").value 
+    console.log('coin_amount',coin_amount)
+
+    if (!coin_amount) {
+        console.log('下单金额不能是0');
         return;
     }
 
@@ -934,7 +941,7 @@ function getPayment() {
     form.append('user_id',user.user_partner_id);
     form.append('eth_fee','0.001');
     form.append('coin','eth');
-    form.append('coin_amount','1.2');
+    form.append('coin_amount',coin_amount);
     form.append('remark','测试支付');
     form.append('debug_skip_partner_signture','1');
 

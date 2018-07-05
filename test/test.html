@@ -17,15 +17,16 @@
         <button onClick="coinchat.getLanguage();" class="btn btn-primary btn-lg btn-block">getLanguage</button>
     </div>
 
-    <div className="block-test block-test-invoke">
+    <div class="block-test block-test-invoke">
         <h2>基础功能</h2>
         <button onClick="coinchat.getConfig();" class="btn btn-primary btn-lg btn-block">CONFIG</button>
         <button onClick="coinchat.getUserInfo();" class="btn btn-primary btn-lg btn-block">获得用户信息</button>
     </div>
 
-    <div className="block-test block-test-invoke">
+    <div class="block-test block-test-invoke">
         <h2>支付订单</h2>
         <div>
+            <input id="amount" placeholder="输入支付ETH金额" class="form-control" />
             <button onClick="coinchat.getPayment();" class="btn btn-primary btn-lg btn-block">支付</button>
         </div>
     </div>
@@ -35,6 +36,9 @@
         }
         .block-test {
             margin-bottom: 40px;
+        }
+        .block-test .form-control {
+            margin-bottom: 10px;
         }
     </style>
 </body>

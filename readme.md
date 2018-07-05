@@ -43,9 +43,7 @@ COINCHAT JS SDK文档
 
     coinchat.ready(function(){
         console.log('coinchat签名通过')
-        coinchat.getLoginUserInfo({},function(res){
-            console.log('获得的用户信息是',res)
-        });
+        coinchat.getLoginUserInfo();
     });
     
 JS-SDK方法
