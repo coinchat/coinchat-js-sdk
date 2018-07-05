@@ -875,8 +875,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__index_js___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__index_js__);
 
 
+
+var user = {};
+
 console.log('coinchat',__WEBPACK_IMPORTED_MODULE_0__index_js___default.a);
-console.log('coinchat_sign',__WEBPACK_IMPORTED_MODULE_0__index_js___default.a.getSign({'data':'123'}));
+// console.log('coinchat_sign',coinchat.getSign({'data':'123'}));
 
 __WEBPACK_IMPORTED_MODULE_0__index_js___default.a.ready(function(){
     console.log('this is coinchat ready callback');
@@ -886,20 +889,49 @@ __WEBPACK_IMPORTED_MODULE_0__index_js___default.a.ready(function(){
     console.log('this is coinchat ready callback2');
 })
 
-//开始config
-// var timestamp = Math.floor(new Date().getTime() / 1000);
-// coinchat.config({
-//     debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
-//     partner_no  : '1528949462419631', // 必填，唯一标识
-//     timestamp: timestamp, // 必填，生成签名的时间戳
-//     nonce    : timestamp, // 必填，生成签名的随机串
-// });
 
-console.log('fetch开始');
+
+
+//开始config
+function getConfig() {
+    var timestamp = Math.floor(new Date().getTime() / 1000);
+    __WEBPACK_IMPORTED_MODULE_0__index_js___default.a.config({
+        debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+        partner_no  : '1528949462419631', // 必填，唯一标识
+        timestamp: timestamp, // 必填，生成签名的时间戳
+        nonce    : timestamp, // 必填，生成签名的随机串
+    });
+}
+__WEBPACK_IMPORTED_MODULE_0__index_js___default.a.getConfig = getConfig
+
+
+getConfig();
+
+function getUserInfo() {
+    __WEBPACK_IMPORTED_MODULE_0__index_js___default.a.getLoginUserInfo({
+        'success' : function(res) {
+            console.log('获得用户成功',res)
+            user = res['data'];
+            console.log('user1',user)
+        },
+        'fail'    : function(res) {
+            console.log('获得用户失败',res);
+        }
+    })
+}
+__WEBPACK_IMPORTED_MODULE_0__index_js___default.a.getUserInfo = getUserInfo
+
 function getPayment() {
+    
+    console.log('user',user)
+    if (!user.user_partner_id) {
+        console.log('需要先调用getLoginUser获得用户ID才能下单');
+        return;
+    }
+
     var form = new FormData();
     form.append('partner_no','1528949462419631');
-    form.append('user_id','pRzhLlxJniGvsVjgI75x2U1eRKEQqEuyR');
+    form.append('user_id',user.user_partner_id);
     form.append('eth_fee','0.001');
     form.append('coin','eth');
     form.append('coin_amount','1.2');
@@ -1022,8 +1054,9 @@ function execute(sdkName, res, handler) {
     var resObj = JSON.parse(res);
     var status = resObj.status;
 
-    console.log('resObj',resObj);
-    console.log('status',status);
+    console.log('execute:res',res);
+    console.log('execute:res',resObj);
+    console.log('execute:status',status);
 
     switch (status) {
         case "success":
@@ -1302,9 +1335,15 @@ if (!global.jCoinchat) {
                 }());
             },
             getVersion : function() {
-                console.log('uaLowerCase',uaLowerCase);
                 console.log('coinchatVersion',coinchatVersion)
+                return coinchatVersion;
             },
+
+            isCoinchat : function() {
+                console.log('isCoinchat',isCoinchat)
+                return isCoinchat;
+            },
+
             entrustPay :function(res) {
                 var data = {};
                 invoke('entrustPay', res, function() {

@@ -75,8 +75,9 @@ function execute(sdkName, res, handler) {
     var resObj = JSON.parse(res);
     var status = resObj.status;
 
-    console.log('resObj',resObj);
-    console.log('status',status);
+    console.log('execute:res',res);
+    console.log('execute:res',resObj);
+    console.log('execute:status',status);
 
     switch (status) {
         case "success":
@@ -355,9 +356,15 @@ if (!global.jCoinchat) {
                 }());
             },
             getVersion : function() {
-                console.log('uaLowerCase',uaLowerCase);
                 console.log('coinchatVersion',coinchatVersion)
+                return coinchatVersion;
             },
+
+            isCoinchat : function() {
+                console.log('isCoinchat',isCoinchat)
+                return isCoinchat;
+            },
+
             entrustPay :function(res) {
                 var data = {};
                 invoke('entrustPay', res, function() {

@@ -8,19 +8,32 @@
 </head>
 <body>
     <h1>Coinchat-JS-SDK</h1>
-    <p>测试页面</p>
+    <p>This is Coinchat JS SDK test page</p>
+    <p>测试支付前，需要先Config，获得用户信息后才能进行支付。</p>
+
+    <div class="block-test">
+        <button onClick="coinchat.isCoinchat();" class="btn btn-primary btn-lg btn-block">isCoinchat</button>
+        <button onClick="coinchat.getVersion();" class="btn btn-primary btn-lg btn-block">getVersion</button>
+    </div>
 
     <div className="block-test block-test-invoke">
-        <button onClick="coinchat.config({});" class="btn btn-primary">CONFIG</button>
-        <button onClick="coinchat.getLoginUserInfo({});" class="btn btn-primary">getLoginUserInfo</button>
-        <button onClick="coinchat.getVersion();" class="btn btn-primary">getVersion</button>
+        <h2>基础功能</h2>
+        <button onClick="coinchat.getConfig();" class="btn btn-primary btn-lg btn-block">CONFIG</button>
+        <button onClick="coinchat.getUserInfo();" class="btn btn-primary btn-lg btn-block">获得用户信息</button>
     </div>
 
-    <div>
+    <div className="block-test block-test-invoke">
         <h2>支付订单</h2>
         <div>
-            <button onClick="coinchat.getPayment();" class="btn btn-primary">支付</button>
+            <button onClick="coinchat.getPayment();" class="btn btn-primary btn-lg btn-block">支付</button>
         </div>
     </div>
-
+    <style>
+        body {
+            padding:15px;
+        }
+        .block-test {
+            margin-bottom: 40px;
+        }
+    </style>
 </body>
