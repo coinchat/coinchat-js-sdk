@@ -25,8 +25,10 @@ function getHashByData(data,api_secret = '') {
     var str = '';
     for (i = 0; i < len; i++) {
       k = keys[i];
-      str += k + '=' + myObj[k];
+      str += '&' + k + '=' + myObj[k];
     }
+
+    str = str.substr(1);
 
     var sign =  hmacSHA256(str,api_secret).toString();
     return sign;
@@ -297,11 +299,7 @@ if (!global.jCoinchat) {
             },
 
             getLoginUserInfo : function(data) {
-                invoke('getLoginUserInfo', {
-                    // 'partner_no' : data.partner_no,
-                    // 'timestamp'  : data.timestamp,
-                    // 'nonce'      : data.nonce
-                }, function() {
+                invoke('getLoginUserInfo', {}, function() {
                     data._complete = function(res) {
                         // delete res.type
                         console.log('调用完成');
