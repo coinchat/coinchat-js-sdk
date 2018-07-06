@@ -1,6 +1,6 @@
 {
   "name": "Coinchat-JS-SDK",
-  "version": "0.0.1",
+  "version": "0.1.2",
   "description": "Coinchat JS SDK",
   "main": "index.js",
   "author": "dreamcog",

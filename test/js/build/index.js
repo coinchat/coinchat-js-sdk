@@ -877,6 +877,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 var user = {};
+var api_secret = '9cltjeoremroutzowcucjcl9y1j5tj4j';
 
 console.log('coinchat',__WEBPACK_IMPORTED_MODULE_0__index_js___default.a);
 // console.log('coinchat_sign',coinchat.getSign({'data':'123'}));
@@ -895,12 +896,18 @@ __WEBPACK_IMPORTED_MODULE_0__index_js___default.a.ready(function(){
 //开始config
 function getConfig() {
     var timestamp = Math.floor(new Date().getTime() / 1000);
-    __WEBPACK_IMPORTED_MODULE_0__index_js___default.a.config({
-        debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+
+    var data = {
         partner_no  : '1528949462419631', // 必填，唯一标识
         timestamp: timestamp, // 必填，生成签名的时间戳
         nonce    : timestamp, // 必填，生成签名的随机串
-    });
+    }
+    var sign = __WEBPACK_IMPORTED_MODULE_0__index_js___default.a.getSign(data,api_secret)
+
+    data['sign'] = sign
+    data['debug'] = true;
+
+    __WEBPACK_IMPORTED_MODULE_0__index_js___default.a.config(data);
 }
 __WEBPACK_IMPORTED_MODULE_0__index_js___default.a.getConfig = getConfig
 
@@ -961,7 +968,14 @@ function getPayment() {
     .then(json => {
 
         var timestamp = Math.floor(new Date().getTime() / 1000);
-        __WEBPACK_IMPORTED_MODULE_0__index_js___default.a.entrustPay({'deposit_no':json.data.deposit.deposit_no,'timestamp':timestamp,'nonce':timestamp,'partner_no':'1528949462419631'})
+        var send_data = {
+            'deposit_no':json.data.deposit.deposit_no,
+            'timestamp':timestamp,
+            'nonce':timestamp,
+            'partner_no':'1528949462419631'
+        }
+        send_data['sign'] = __WEBPACK_IMPORTED_MODULE_0__index_js___default.a.getSign(send_data,api_secret)
+        __WEBPACK_IMPORTED_MODULE_0__index_js___default.a.entrustPay(send_data)
     })
 }
 
@@ -994,10 +1008,7 @@ var dsBridge=__webpack_require__(9);
 var clone = __webpack_require__(10);
 
 //签名方法
-function getHashByData(data,api_secret = '9cltjeoremroutzowcucjcl9y1j5tj4j') {
-    // var api_key = "v1ymtpfgaautzakupen4xocrnnvnxwjz";
-    // var api_secret = '9cltjeoremroutzowcucjcl9y1j5tj4j';
-    console.log('要签名的数据是',data);
+function getHashByData(data,api_secret = '') {
     var myObj = data,
       keys = [],
       k, i, len;
@@ -1018,16 +1029,14 @@ function getHashByData(data,api_secret = '9cltjeoremroutzowcucjcl9y1j5tj4j') {
     }
 
     var sign =  __WEBPACK_IMPORTED_MODULE_0_crypto_js_hmac_sha256___default()(str,api_secret).toString();
-    console.log('签名字符串是',str);
-    console.log('签名后是',sign);
     return sign;
 }
 
 function invoke(sdkName, args, handler) {
 
     console.log('invoke-start',sdkName,args,handler)
-    var sign = getHashByData(args);
-    args['sign'] = sign;
+    // var sign = getHashByData(args);
+    // args['sign'] = sign;
 
     //Call asynchronously
     dsBridge.call("invoke",{'sdkname':sdkName,'args':args}, function (res) {
@@ -1284,16 +1293,14 @@ if (!global.jCoinchat) {
             },
 
             getSign: function(args,api_secret) {
-                var sign = getHashByData(args,api_secret);
-                args['sign'] = sign;
-                return args;
+                return getHashByData(args,api_secret);
             },
 
             getLoginUserInfo : function(data) {
                 invoke('getLoginUserInfo', {
-                    'partner_no' : data.partner_no,
-                    'timestamp'  : data.timestamp,
-                    'nonce'      : data.nonce
+                    // 'partner_no' : data.partner_no,
+                    // 'timestamp'  : data.timestamp,
+                    // 'nonce'      : data.nonce
                 }, function() {
                     data._complete = function(res) {
                         // delete res.type

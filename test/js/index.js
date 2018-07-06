@@ -2,6 +2,7 @@ import coinchat from './../../index.js'
 
 
 var user = {};
+var api_secret = '9cltjeoremroutzowcucjcl9y1j5tj4j';
 
 console.log('coinchat',coinchat);
 // console.log('coinchat_sign',coinchat.getSign({'data':'123'}));
@@ -20,12 +21,18 @@ coinchat.ready(function(){
 //开始config
 function getConfig() {
     var timestamp = Math.floor(new Date().getTime() / 1000);
-    coinchat.config({
-        debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+
+    var data = {
         partner_no  : '1528949462419631', // 必填，唯一标识
         timestamp: timestamp, // 必填，生成签名的时间戳
         nonce    : timestamp, // 必填，生成签名的随机串
-    });
+    }
+    var sign = coinchat.getSign(data,api_secret)
+
+    data['sign'] = sign
+    data['debug'] = true;
+
+    coinchat.config(data);
 }
 coinchat.getConfig = getConfig
 
@@ -86,7 +93,14 @@ function getPayment() {
     .then(json => {
 
         var timestamp = Math.floor(new Date().getTime() / 1000);
-        coinchat.entrustPay({'deposit_no':json.data.deposit.deposit_no,'timestamp':timestamp,'nonce':timestamp,'partner_no':'1528949462419631'})
+        var send_data = {
+            'deposit_no':json.data.deposit.deposit_no,
+            'timestamp':timestamp,
+            'nonce':timestamp,
+            'partner_no':'1528949462419631'
+        }
+        send_data['sign'] = coinchat.getSign(send_data,api_secret)
+        coinchat.entrustPay(send_data)
     })
 }
 

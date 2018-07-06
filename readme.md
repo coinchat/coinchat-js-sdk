@@ -62,6 +62,10 @@ JS-SDK方法
 
     coinchat.getLanguage();
 
+###  获得签名
+
+    coinchat.getSign(data,api_secret);
+
 
 ###  获得登录用户信息
 需要config后才可以调用用户登录信息
