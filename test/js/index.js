@@ -76,6 +76,7 @@ function getPayment() {
     form.append('coin_amount',coin_amount);
     form.append('remark','测试支付');
     form.append('debug_skip_partner_signture','1');
+    form.append('callback_url','https://coinchat.im/test');
 
     var url = 'http://api.coinchat.com/v1/entrust_wallet/deposit/add.html'
     fetch(url,{
