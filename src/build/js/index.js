@@ -885,7 +885,7 @@ var dsBridge=__webpack_require__(7);
 var clone = __webpack_require__(8);
 
 //签名方法
-function getHashByData(data,api_secret = '') {
+function getHashByData(data,api_secret) {
     var myObj = data,
       keys = [],
       k, i, len;

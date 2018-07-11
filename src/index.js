@@ -8,7 +8,7 @@ var dsBridge=require("dsbridge");
 var clone = require('clone');
 
 //签名方法
-function getHashByData(data,api_secret = '') {
+function getHashByData(data,api_secret) {
     var myObj = data,
       keys = [],
       k, i, len;

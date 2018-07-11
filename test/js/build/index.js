@@ -70,6 +70,209 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__index_js__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__index_js___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__index_js__);
+
+
+
+var user = {};
+var api_secret = '9cltjeoremroutzowcucjcl9y1j5tj4j';
+
+console.log('coinchat',__WEBPACK_IMPORTED_MODULE_0__index_js___default.a);
+// console.log('coinchat_sign',coinchat.getSign({'data':'123'}));
+
+__WEBPACK_IMPORTED_MODULE_0__index_js___default.a.ready(function(){
+    console.log('this is coinchat ready callback');
+})
+
+__WEBPACK_IMPORTED_MODULE_0__index_js___default.a.ready(function(){
+    console.log('this is coinchat ready callback2');
+})
+
+
+
+
+//开始config
+function getConfig() {
+    var timestamp = Math.floor(new Date().getTime() / 1000);
+
+    var data = {
+        partner_no  : '1528949462419631', // 必填，唯一标识
+        timestamp: timestamp, // 必填，生成签名的时间戳
+        nonce    : timestamp, // 必填，生成签名的随机串
+    }
+    var sign = __WEBPACK_IMPORTED_MODULE_0__index_js___default.a.getSign(data,api_secret)
+
+    data['sign'] = sign
+    data['debug'] = true;
+
+    __WEBPACK_IMPORTED_MODULE_0__index_js___default.a.config(data);
+}
+__WEBPACK_IMPORTED_MODULE_0__index_js___default.a.getConfig = getConfig
+
+
+getConfig();
+
+function getUserInfo() {
+    __WEBPACK_IMPORTED_MODULE_0__index_js___default.a.getLoginUserInfo({
+        'success' : function(res) {
+            console.log('获得用户成功',res)
+            user = res['data'];
+        },
+        'fail'    : function(res) {
+            console.log('获得用户失败',res);
+        }
+    })
+}
+__WEBPACK_IMPORTED_MODULE_0__index_js___default.a.getUserInfo = getUserInfo
+
+function getPayment() {
+    
+    if (!user.user_partner_id) {
+        console.log('需要先调用getLoginUser获得用户ID才能下单',user);
+        return;
+    }
+
+
+    var coin_amount = document.getElementById("amount").value 
+    console.log('coin_amount',coin_amount)
+
+    if (!coin_amount) {
+        console.log('下单金额不能是0');
+        return;
+    }
+
+    var form = new FormData();
+    form.append('partner_no','1528949462419631');
+    form.append('user_id',user.user_partner_id);
+    form.append('eth_fee','0.001');
+    form.append('coin','eth');
+    form.append('coin_amount',coin_amount);
+    form.append('remark','测试支付');
+    form.append('debug_skip_partner_signture','1');
+    form.append('callback_url','https://coinchat.im/test');
+
+    var url = 'http://api.coinchat.com/v1/entrust_wallet/deposit/add.html'
+    fetch(url,{
+        credentials: 'same-origin',
+        method: 'POST', 
+        body: form 
+    }).then(response => {
+        // console.log('typeof',typeof response,response,);
+        if (typeof response == 'object' && !response.json) {
+            return response
+        }else {
+            return response.json()
+        }
+    })
+    .then(json => {
+
+        var timestamp = Math.floor(new Date().getTime() / 1000);
+        var send_data = {
+            'deposit_no':json.data.deposit.deposit_no,
+            'timestamp':timestamp,
+            'nonce':timestamp,
+            'partner_no':'1528949462419631'
+        }
+        send_data['sign'] = __WEBPACK_IMPORTED_MODULE_0__index_js___default.a.getSign(send_data,api_secret)
+        __WEBPACK_IMPORTED_MODULE_0__index_js___default.a.entrustPay(send_data)
+    })
+}
+
+__WEBPACK_IMPORTED_MODULE_0__index_js___default.a.getPayment = getPayment
+/* harmony default export */ __webpack_exports__["default"] = (__WEBPACK_IMPORTED_MODULE_0__index_js___default.a);
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports=__webpack_require__(2)
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(true)
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define([], factory);
+	else if(typeof exports === 'object')
+		exports["coinchat"] = factory();
+	else
+		root["coinchat"] = factory();
+})(typeof self !== 'undefined' ? self : this, function() {
+return /******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, {
+/******/ 				configurable: false,
+/******/ 				enumerable: true,
+/******/ 				get: getter
+/******/ 			});
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/ 	// Load entry module and return exports
 /******/ 	return __webpack_require__(__webpack_require__.s = 2);
 /******/ })
 /************************************************************************/
@@ -871,133 +1074,9 @@ module.exports = g;
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__index_js__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__index_js___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__index_js__);
-
-
-
-var user = {};
-var api_secret = '9cltjeoremroutzowcucjcl9y1j5tj4j';
-
-console.log('coinchat',__WEBPACK_IMPORTED_MODULE_0__index_js___default.a);
-// console.log('coinchat_sign',coinchat.getSign({'data':'123'}));
-
-__WEBPACK_IMPORTED_MODULE_0__index_js___default.a.ready(function(){
-    console.log('this is coinchat ready callback');
-})
-
-__WEBPACK_IMPORTED_MODULE_0__index_js___default.a.ready(function(){
-    console.log('this is coinchat ready callback2');
-})
-
-
-
-
-//开始config
-function getConfig() {
-    var timestamp = Math.floor(new Date().getTime() / 1000);
-
-    var data = {
-        partner_no  : '1528949462419631', // 必填，唯一标识
-        timestamp: timestamp, // 必填，生成签名的时间戳
-        nonce    : timestamp, // 必填，生成签名的随机串
-    }
-    var sign = __WEBPACK_IMPORTED_MODULE_0__index_js___default.a.getSign(data,api_secret)
-
-    data['sign'] = sign
-    data['debug'] = true;
-
-    __WEBPACK_IMPORTED_MODULE_0__index_js___default.a.config(data);
-}
-__WEBPACK_IMPORTED_MODULE_0__index_js___default.a.getConfig = getConfig
-
-
-getConfig();
-
-function getUserInfo() {
-    __WEBPACK_IMPORTED_MODULE_0__index_js___default.a.getLoginUserInfo({
-        'success' : function(res) {
-            console.log('获得用户成功',res)
-            user = res['data'];
-        },
-        'fail'    : function(res) {
-            console.log('获得用户失败',res);
-        }
-    })
-}
-__WEBPACK_IMPORTED_MODULE_0__index_js___default.a.getUserInfo = getUserInfo
-
-function getPayment() {
-    
-    if (!user.user_partner_id) {
-        console.log('需要先调用getLoginUser获得用户ID才能下单',user);
-        return;
-    }
-
-
-    var coin_amount = document.getElementById("amount").value 
-    console.log('coin_amount',coin_amount)
-
-    if (!coin_amount) {
-        console.log('下单金额不能是0');
-        return;
-    }
-
-    var form = new FormData();
-    form.append('partner_no','1528949462419631');
-    form.append('user_id',user.user_partner_id);
-    form.append('eth_fee','0.001');
-    form.append('coin','eth');
-    form.append('coin_amount',coin_amount);
-    form.append('remark','测试支付');
-    form.append('debug_skip_partner_signture','1');
-    form.append('callback_url','https://coinchat.im/test');
-
-    var url = 'http://api.coinchat.com/v1/entrust_wallet/deposit/add.html'
-    fetch(url,{
-        credentials: 'same-origin',
-        method: 'POST', 
-        body: form 
-    }).then(response => {
-        // console.log('typeof',typeof response,response,);
-        if (typeof response == 'object' && !response.json) {
-            return response
-        }else {
-            return response.json()
-        }
-    })
-    .then(json => {
-
-        var timestamp = Math.floor(new Date().getTime() / 1000);
-        var send_data = {
-            'deposit_no':json.data.deposit.deposit_no,
-            'timestamp':timestamp,
-            'nonce':timestamp,
-            'partner_no':'1528949462419631'
-        }
-        send_data['sign'] = __WEBPACK_IMPORTED_MODULE_0__index_js___default.a.getSign(send_data,api_secret)
-        __WEBPACK_IMPORTED_MODULE_0__index_js___default.a.entrustPay(send_data)
-    })
-}
-
-__WEBPACK_IMPORTED_MODULE_0__index_js___default.a.getPayment = getPayment
-/* harmony default export */ __webpack_exports__["default"] = (__WEBPACK_IMPORTED_MODULE_0__index_js___default.a);
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports=__webpack_require__(4)
-
-/***/ }),
-/* 4 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* WEBPACK VAR INJECTION */(function(global) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_crypto_js_hmac_sha256__ = __webpack_require__(5);
+/* WEBPACK VAR INJECTION */(function(global) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_crypto_js_hmac_sha256__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_crypto_js_hmac_sha256___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_crypto_js_hmac_sha256__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_crypto_js_enc_base64__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_crypto_js_enc_base64__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_crypto_js_enc_base64___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_crypto_js_enc_base64__);
 /** * omd 让你写的javascript代码兼容所有的运行环境，符合amd, cmd, commonjs规范，在原生环境中也能运行
  * 例如，你写了一堆代码，在没有模块化加载的时候可以使用，在模块化框架下也可以使用
@@ -1005,11 +1084,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
-var dsBridge=__webpack_require__(9);
-var clone = __webpack_require__(10);
+var dsBridge=__webpack_require__(7);
+var clone = __webpack_require__(8);
 
 //签名方法
-function getHashByData(data,api_secret = '') {
+function getHashByData(data,api_secret) {
     var myObj = data,
       keys = [],
       k, i, len;
@@ -1412,13 +1491,13 @@ if (!global.jCoinchat) {
 /* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(1)))
 
 /***/ }),
-/* 5 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 ;(function (root, factory, undef) {
 	if (true) {
 		// CommonJS
-		module.exports = exports = factory(__webpack_require__(0), __webpack_require__(6), __webpack_require__(7));
+		module.exports = exports = factory(__webpack_require__(0), __webpack_require__(4), __webpack_require__(5));
 	}
 	else if (typeof define === "function" && define.amd) {
 		// AMD
@@ -1435,7 +1514,7 @@ if (!global.jCoinchat) {
 }));
 
 /***/ }),
-/* 6 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 ;(function (root, factory) {
@@ -1639,7 +1718,7 @@ if (!global.jCoinchat) {
 }));
 
 /***/ }),
-/* 7 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 ;(function (root, factory) {
@@ -1787,7 +1866,7 @@ if (!global.jCoinchat) {
 }));
 
 /***/ }),
-/* 8 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 ;(function (root, factory) {
@@ -1927,7 +2006,7 @@ if (!global.jCoinchat) {
 }));
 
 /***/ }),
-/* 9 */
+/* 7 */
 /***/ (function(module, exports) {
 
 var bridge = {
@@ -2064,7 +2143,7 @@ var bridge = {
 module.exports = bridge;
 
 /***/ }),
-/* 10 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(Buffer) {var clone = (function() {
@@ -2319,10 +2398,10 @@ if (typeof module === 'object' && module.exports) {
   module.exports = clone;
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(11).Buffer))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9).Buffer))
 
 /***/ }),
-/* 11 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2336,9 +2415,9 @@ if (typeof module === 'object' && module.exports) {
 
 
 
-var base64 = __webpack_require__(12)
-var ieee754 = __webpack_require__(13)
-var isArray = __webpack_require__(14)
+var base64 = __webpack_require__(10)
+var ieee754 = __webpack_require__(11)
+var isArray = __webpack_require__(12)
 
 exports.Buffer = Buffer
 exports.SlowBuffer = SlowBuffer
@@ -4119,7 +4198,7 @@ function isnan (val) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 12 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4277,7 +4356,7 @@ function fromByteArray (uint8) {
 
 
 /***/ }),
-/* 13 */
+/* 11 */
 /***/ (function(module, exports) {
 
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
@@ -4367,7 +4446,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
 
 
 /***/ }),
-/* 14 */
+/* 12 */
 /***/ (function(module, exports) {
 
 var toString = {}.toString;
@@ -4376,6 +4455,11 @@ module.exports = Array.isArray || function (arr) {
   return toString.call(arr) == '[object Array]';
 };
 
+
+/***/ })
+/******/ ])["default"];
+});
+//# sourceMappingURL=index.js.map
 
 /***/ })
 /******/ ])["default"];
