@@ -1,6 +1,6 @@
 {
   "name": "coinchat-js-sdk",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Coinchat Official JS-SDK",
   "main": "index.js",
   "directories": {
