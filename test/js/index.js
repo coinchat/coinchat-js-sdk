@@ -98,9 +98,15 @@ function getPayment() {
             'deposit_no':json.data.deposit.deposit_no,
             'timestamp':timestamp,
             'nonce':timestamp,
-            'partner_no':'1528949462419631'
+            'partner_no':'1528949462419631',
         }
         send_data['sign'] = coinchat.getSign(send_data,api_secret)
+        send_data['success'] = function() {
+            console.log('success');
+        }
+        send_data['fail'] = function() {
+            console.log('fail');
+        }
         coinchat.entrustPay(send_data)
     })
 }

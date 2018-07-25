@@ -181,9 +181,15 @@ function getPayment() {
             'deposit_no':json.data.deposit.deposit_no,
             'timestamp':timestamp,
             'nonce':timestamp,
-            'partner_no':'1528949462419631'
+            'partner_no':'1528949462419631',
         }
         send_data['sign'] = __WEBPACK_IMPORTED_MODULE_0__index_js___default.a.getSign(send_data,api_secret)
+        send_data['success'] = function() {
+            console.log('success');
+        }
+        send_data['fail'] = function() {
+            console.log('fail');
+        }
         __WEBPACK_IMPORTED_MODULE_0__index_js___default.a.entrustPay(send_data)
     })
 }
@@ -1160,18 +1166,19 @@ function execute(sdkName, res, handler) {
     console.log('execute:res',res);
     console.log('execute:res',resObj);
     console.log('execute:status',status);
+    console.log('execute:handler',handler);
 
     switch (status) {
         case "success":
-            handler.success && handler.success(resObj);
+            handler._success && handler._success(resObj);
             break;
         case "cancel":
-            handler.cancel && handler.cancel(resObj);
+            handler._cancel && handler._cancel(resObj);
             break;
         default:
-            handler.fail && handler.fail(resObj)
+            handler._fail && handler._fail(resObj)
     }
-    handler.complete && handler.complete(resObj)
+    handler._complete && handler._complete(resObj)
 }
 
 // function addVerifyInfo(data) {
@@ -1445,29 +1452,32 @@ if (!global.jCoinchat) {
             entrustPay :function(res) {
                 var data = {};
                 invoke('entrustPay', res, function() {
-                    data._complete = function(res) {
+                    data._complete = function(result) {
                         // delete res.type
                         console.log('调用完成');
-                        if (data.complete) {
-                            data.complete(res);
+                        if (res.complete) {
+                            res.complete(result);
                         }
                     };
-                    data._success = function(res) {
+                    data._success = function(result) {
                         // delete res.type
-                        console.log('调用成功');
-                        if (data.success) {
-                            data.success(res);
+                        console.log('调用成功',res,result);
+                        if (res.success) {
+                            res.success(result);
                         }
                     };
-                    data._cancel = function(res) {
+                    data._cancel = function(result) {
                         // delete res.type
                         console.log('调用取消');
+                        if (res.cancel) {
+                            res.cancel(result);
+                        }
                     };
-                    data._fail = function(res) {
+                    data._fail = function(result) {
                         // delete res.type
                         console.log('调用失败');
-                        if (data.fail) {
-                            data.fail(res);
+                        if (res.fail) {
+                            res.fail(result);
                         }
                     };
                     return data;

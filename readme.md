@@ -120,6 +120,12 @@ JS-SDK方法
        },
        'fail'    : function(res) {
             console.log('支付失败',res);
+       },
+       'cancel'  :  function(res) {
+            console.log('支付被用户取消',res);
+       },
+       'complete'  :  function(res) {
+            console.log('支付完成',res);
        }
     })
 
