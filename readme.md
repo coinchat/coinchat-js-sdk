@@ -9,7 +9,7 @@ COINCHAT JS SDK文档
 2. 在网页前端调用coinchat.config()接口来执行config动作。
 3. 完成后在coinchat.ready()中传入config完成后的执行代码。
 
-目前最新版本号为0.1.3 （测试版，尚不能用于生产环境）
+目前最新版本号为0.1.6 （测试版，尚不能用于生产环境）
 
 
 模块引入

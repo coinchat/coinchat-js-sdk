@@ -59,7 +59,6 @@ function getPayment() {
         return;
     }
 
-
     var coin_amount = document.getElementById("amount").value 
     console.log('coin_amount',coin_amount)
 
