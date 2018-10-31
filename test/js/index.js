@@ -209,4 +209,7 @@ function getContractPayment() {
 
 }
 coinchat.getContractPayment = getContractPayment
+
+console.log('coinchat-in',coinchat);
+
 export default coinchat;
