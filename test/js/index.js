@@ -1,6 +1,5 @@
 import coinchat from './../../index.js'
 
-
 var user = {};
 var api_secret = '9cltjeoremroutzowcucjcl9y1j5tj4j';
 

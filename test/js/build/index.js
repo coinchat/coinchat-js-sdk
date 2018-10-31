@@ -83,7 +83,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__index_js___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__index_js__);
 
 
-
 var user = {};
 var api_secret = '9cltjeoremroutzowcucjcl9y1j5tj4j';
 
