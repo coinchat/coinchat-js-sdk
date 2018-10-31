@@ -30,7 +30,23 @@
         <h2>支付订单</h2>
         <div>
             <input id="amount" placeholder="输入支付ETH金额" class="form-control" />
-            <button onClick="coinchat.getPayment();" class="btn btn-primary btn-lg btn-block">支付</button>
+            <button onClick="coinchat.getPayment();" class="btn btn-primary btn-lg btn-block">支付第三方托管订单</button>
+        </div>
+
+        <div>
+            <input id="amount" placeholder="输入支付ETH金额" class="form-control" />
+            <button onClick="coinchat.getPayment();" class="btn btn-primary btn-lg btn-block">支付普通订单</button>
+        </div>
+    </div>
+
+    <div class="block-test block-test-invoke">
+        <h2>支付智能合约订单</h2>
+        <div>
+            <input id="contract-coin" value="eth" placeholder="输入支付币种" class="form-control" />
+            <input id="contract-amount" value="0.00019" placeholder="输入支付金额" class="form-control" />
+            <input id="contract-address" value="0x5a5cb5d7dae2f248cc3d2d2cd2518b87e907da59" placeholder="输入支付地址" class="form-control" />
+            <input id="contract-data" value="0xdc6dd1520000000000000000000000000000000000000000000000000000000000000040" placeholder="输入支付数据" class="form-control" />
+            <button onClick="coinchat.getContractPayment();" class="btn btn-primary btn-lg btn-block">支付智能合约订单</button>
         </div>
     </div>
     <style>

@@ -110,5 +110,103 @@ function getPayment() {
     })
 }
 
+
+function getNormalPayment() {
+    
+    if (!user.user_partner_id) {
+        console.log('需要先调用getLoginUser获得用户ID才能下单',user);
+        return;
+    }
+
+    var coin_amount = document.getElementById("amount").value 
+    console.log('coin_amount',coin_amount)
+
+    if (!coin_amount) {
+        console.log('下单金额不能是0');
+        return;
+    }
+
+    var form = new FormData();
+    form.append('partner_no','1528949462419631');
+    form.append('user_id',user.user_partner_id);
+    form.append('eth_fee','0.001');
+    form.append('coin','eth');
+    form.append('coin_amount',coin_amount);
+    form.append('remark','测试支付');
+    form.append('debug_skip_partner_signture','1');
+    form.append('callback_url','https://coinchat.im/test');
+
+    var url = 'http://api.coinchat.com/v1/entrust_wallet/deposit/add.html'
+    fetch(url,{
+        credentials: 'same-origin',
+        method: 'POST', 
+        body: form 
+    }).then(response => {
+        // console.log('typeof',typeof response,response,);
+        if (typeof response == 'object' && !response.json) {
+            return response
+        }else {
+            return response.json()
+        }
+    })
+    .then(json => {
+
+        var timestamp = Math.floor(new Date().getTime() / 1000);
+        var send_data = {
+            'deposit_no':json.data.deposit.deposit_no,
+            'timestamp':timestamp,
+            'nonce':timestamp,
+            'partner_no':'1528949462419631',
+        }
+        send_data['sign'] = coinchat.getSign(send_data,api_secret)
+        send_data['success'] = function() {
+            console.log('success');
+        }
+        send_data['fail'] = function() {
+            console.log('fail');
+        }
+        coinchat.entrustPay(send_data)
+    })
+}
+
 coinchat.getPayment = getPayment
+
+
+function getContractPayment() {
+    
+    // if (!user.user_partner_id) {
+    //     alert('需要先获得LOGIN_USER_ID才可以下单');
+    //     console.log('需要先调用getLoginUser获得用户ID才能下单',user);
+    //     return;
+    // }
+
+    var coin = document.getElementById("contract-coin").value 
+    var amount = document.getElementById("contract-amount").value 
+    var address = document.getElementById("contract-address").value 
+    var data = document.getElementById("contract-data").value 
+
+    // console.log('coin_amount',coin_amount)
+    if (!amount) {
+        console.log('下单金额不能是0');
+        return;
+    }
+
+    var timestamp = Math.floor(new Date().getTime() / 1000);
+    var send_data = {
+        'coin'      : coin,
+        'amount'    : amount,
+        'to_address': address,
+        'data'      : data,
+        'partner_no':'1528949462419631',
+    }
+    send_data['success'] = function(result) {
+        console.log('contract_success',result);
+    }
+    send_data['fail'] = function(result) {
+        console.log('contract_fail',result);
+    }
+    coinchat.contractPay(send_data)
+
+}
+coinchat.getContractPayment = getContractPayment
 export default coinchat;

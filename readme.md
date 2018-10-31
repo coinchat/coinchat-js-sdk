@@ -70,18 +70,10 @@ JS-SDK方法
 
 
 ###  获得登录用户信息
-需要config后才可以调用用户登录信息
 
-    coinchat.getLoginUserInfo({
-        'success' : function(res) {
-            console.log('获得用户成功',res)
-            var user = res.data;
-            console.log('user',user)
-        },
-        'fail'    : function(res) {
-            console.log('获得用户失败',res);
-        }
-    })
+COINCHAT采用OAUTH的方法来获得当前用户的ID，如果你需要调用支付等，也需要通过此方案获得当前的登录用户ID。
+
+[获得用户信息](https://github.com/coinchat/docs/blob/master/zh/COINCHAT%20%E7%BD%91%E9%A1%B5%E7%99%BB%E5%BD%95.md)
 
 
 ###  支付订单(至第三方托管账户)
@@ -133,12 +125,43 @@ JS-SDK方法
 支付成功会回调你设置的回调地址
 
 
+
+#### 支付订单(至ETH智能合约)
+（需要config后才可以调用支付）
+
+
+    coinchat.contractPay({
+        'address'   :   '0Xasdasdasdasdasdasd',
+        'amount'    :   '0.1',
+        'coin'      :   'ETH',
+        'data'      :   "0xdc6dd1520000000000000000000000000000000000000000000000000000000000000040",
+        'partner_no' :  "123123123123",
+        'success'   : function(res) {
+            console.log('支付成功',res)
+        },
+        'fail'    : function(res) {
+            console.log('支付失败',res);
+        },
+        'cancel'  :  function(res) {
+            console.log('支付被用户取消',res);
+        },
+        'complete'  :  function(res) {
+            console.log('支付完成',res);
+        }
+    })
+
+
+
 #### 关于“支付订单”2个接口，“至第三方托管账户“和“至商家账户余额“的区别和使用场景说明。
 
 简单的说，支付至第三方托管账户仅提供给智能合约提供商，需要让用户去执行智能合约的第三方来调用。
 
 * 支付至第三方托管账户代表的是金额存入了一个小的热钱包，商家拥有完全的管理权限，可以调用接口执行转账，发起智能合约等操作。Coinchat仅托管了此钱包，对于商家发起的任意请求，都会签名发布到网络上。在发起转账，调智能合约等请求，都需要此钱包额外的支付矿工费用。因此在最初存入的时候，请预估好未来需要的矿工费。
 * 支付至商家账户，商家立即可以获得收款，此笔收款提现在商户账户上；此账户仅可转账给商家创建人的Coinchat个人账户，转账到创建人账户并不会收取手续费，在实际提现的时候才会有手续费。
+
+
+
+
 
 
 
