@@ -38,7 +38,23 @@
             <button onClick="coinchat.getPayment();" class="btn btn-primary btn-lg btn-block">支付普通订单</button>
         </div>
     </div>
-
+    <div class="block-test block-test-invoke">
+        <h2>Firebase Event</h2>
+        <div>
+            <input id="firebase_key"   value="key" placeholder="key" class="form-control" />
+            <input id="firebase_value" value="value" placeholder="value" class="form-control" />
+            <input id="firebase_key2"   value="key" placeholder="key" class="form-control" />
+            <input id="firebase_value2" value="value" placeholder="value" class="form-control" />
+            <button onClick="coinchat.sendFirebaseEvent();" class="btn btn-primary btn-lg btn-block">firebase事件记录</button>
+        </div>
+    </div>
+    <div class="block-test block-test-invoke">
+        <h2>支付测试</h2>
+        <div>
+            <input id="amount" placeholder="输入支付ETH金额" class="form-control" />
+            <button onClick="coinchat.getPayment();" class="btn btn-primary btn-lg btn-block">支付普通订单</button>
+        </div>
+    </div>
     <div class="block-test block-test-invoke">
         <h2>支付智能合约订单</h2>
         <div>

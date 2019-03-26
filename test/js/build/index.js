@@ -279,7 +279,6 @@ function getContractPayment() {
         'amount'    : amount,
         'to_address': address,
         'data'      : data,
-        'partner_no':'1528949462419631',
     }
     send_data['success'] = function(result) {
         console.log('contract_success',result);
@@ -291,6 +290,47 @@ function getContractPayment() {
 
 }
 __WEBPACK_IMPORTED_MODULE_0__index_js___default.a.getContractPayment = getContractPayment
+
+
+
+function sendFirebaseEvent() {
+    
+    // if (!user.user_partner_id) {
+    //     alert('需要先获得LOGIN_USER_ID才可以下单');
+    //     console.log('需要先调用getLoginUser获得用户ID才能下单',user);
+    //     return;
+    // }
+
+    var key = document.getElementById("firebase_key").value 
+    var value = document.getElementById("firebase_value").value 
+    var key2 = document.getElementById("firebase_key2").value 
+    var value2 = document.getElementById("firebase_value2").value 
+
+    var send_data = {}
+
+    if (key) {
+        send_data[key] = value
+    }
+
+    if (key2) {
+        send_data[key2] = value2
+    }
+    // console.log('coin_amount',coin_amount)
+    if (!key && !key2) {
+        console.log('不能为空');
+        return;
+    }
+
+    send_data['success'] = function(result) {
+        console.log('firebase_event_send_success',result);
+    }
+    send_data['fail'] = function(result) {
+        console.log('firebase_event_send_fail',result);
+    }
+    __WEBPACK_IMPORTED_MODULE_0__index_js___default.a.firebaseEvent(send_data)
+
+}
+__WEBPACK_IMPORTED_MODULE_0__index_js___default.a.sendFirebaseEvent = sendFirebaseEvent
 
 console.log('coinchat-in',__WEBPACK_IMPORTED_MODULE_0__index_js___default.a);
 
@@ -1227,7 +1267,7 @@ function invoke(sdkName, args, handler) {
 
     //Call asynchronously
     dsBridge.call("invoke",{'sdkname':sdkName,'args':args}, function (res) {
-        console.log('调用成功',res);
+        console.log('invoke调用成功',res);
         execute(sdkName, res, handler)
     })
 
@@ -1249,16 +1289,6 @@ function on(sdkName, listener, handler) {
 
 function execute(sdkName, res, handler) {
 
-    // "openEnterpriseChat" == sdkName && (res.errCode = res.err_code);
-    // delete res.err_code, delete res.err_desc, delete res.err_detail;
-    // var errMsg = res.errMsg;
-    // errMsg || (errMsg = res.err_msg, delete res.err_msg, errMsg = formatErrMsg(sdkName, errMsg), res.errMsg = errMsg);
-    // handler = handler || {};
-    // handler._complete && (handler._complete(res), delete handler._complete);
-    // errMsg = res.errMsg || "";
-    // settings.debug && !handler.isInnerInvoke && alert(JSON.stringify(res));
-    // var separatorIndex = errMsg.indexOf(":"),
-    //     status = errMsg.substring(separatorIndex + 1);
     var resObj = JSON.parse(res);
     var status = resObj.status;
 
@@ -1621,6 +1651,41 @@ if (!global.jCoinchat) {
             pay :function(res) {
                 var data = {};
                 invoke('pay', res, function() {
+                    data._complete = function(result) {
+                        // delete res.type
+                        console.log('调用完成');
+                        if (res.complete) {
+                            res.complete(result);
+                        }
+                    };
+                    data._success = function(result) {
+                        // delete res.type
+                        console.log('调用成功',res,result);
+                        if (res.success) {
+                            res.success(result);
+                        }
+                    };
+                    data._cancel = function(result) {
+                        // delete res.type
+                        console.log('调用取消');
+                        if (res.cancel) {
+                            res.cancel(result);
+                        }
+                    };
+                    data._fail = function(result) {
+                        // delete res.type
+                        console.log('调用失败');
+                        if (res.fail) {
+                            res.fail(result);
+                        }
+                    };
+                    return data;
+                }());
+            },
+
+            firebaseEvent : function(res) {
+                var data = {};
+                invoke('firebase_event', res, function() {
                     data._complete = function(result) {
                         // delete res.type
                         console.log('调用完成');

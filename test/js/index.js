@@ -196,7 +196,6 @@ function getContractPayment() {
         'amount'    : amount,
         'to_address': address,
         'data'      : data,
-        'partner_no':'1528949462419631',
     }
     send_data['success'] = function(result) {
         console.log('contract_success',result);
@@ -208,6 +207,47 @@ function getContractPayment() {
 
 }
 coinchat.getContractPayment = getContractPayment
+
+
+
+function sendFirebaseEvent() {
+    
+    // if (!user.user_partner_id) {
+    //     alert('需要先获得LOGIN_USER_ID才可以下单');
+    //     console.log('需要先调用getLoginUser获得用户ID才能下单',user);
+    //     return;
+    // }
+
+    var key = document.getElementById("firebase_key").value 
+    var value = document.getElementById("firebase_value").value 
+    var key2 = document.getElementById("firebase_key2").value 
+    var value2 = document.getElementById("firebase_value2").value 
+
+    var send_data = {}
+
+    if (key) {
+        send_data[key] = value
+    }
+
+    if (key2) {
+        send_data[key2] = value2
+    }
+    // console.log('coin_amount',coin_amount)
+    if (!key && !key2) {
+        console.log('不能为空');
+        return;
+    }
+
+    send_data['success'] = function(result) {
+        console.log('firebase_event_send_success',result);
+    }
+    send_data['fail'] = function(result) {
+        console.log('firebase_event_send_fail',result);
+    }
+    coinchat.firebaseEvent(send_data)
+
+}
+coinchat.sendFirebaseEvent = sendFirebaseEvent
 
 console.log('coinchat-in',coinchat);
 
