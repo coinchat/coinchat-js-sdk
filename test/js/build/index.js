@@ -332,6 +332,52 @@ function sendFirebaseEvent() {
 }
 __WEBPACK_IMPORTED_MODULE_0__index_js___default.a.sendFirebaseEvent = sendFirebaseEvent
 
+
+
+
+function sendShareEvent() {
+    
+    // if (!user.user_partner_id) {
+    //     alert('需要先获得LOGIN_USER_ID才可以下单');
+    //     console.log('需要先调用getLoginUser获得用户ID才能下单',user);
+    //     return;
+    // }
+
+    var share_platform = document.getElementById("share_platform").value 
+    var share_title = document.getElementById("share_title").value 
+    var share_text = document.getElementById("share_text").value 
+
+    var send_data = {}
+
+    send_data['share_platform'] = share_platform
+
+    if (share_title) {
+        send_data['share_title'] = share_title
+    }
+
+    if (share_text) {
+        send_data['share_text'] = share_text
+    }
+    // console.log('coin_amount',coin_amount)
+    if (!share_text && !share_title) {
+        console.log('不能为空');
+        return;
+    }
+    send_data['complete'] = function(result) {
+        console.log('share_event_send_complete',result);
+    }
+    send_data['success'] = function(result) {
+        console.log('share_event_send_success',result);
+    }
+    send_data['fail'] = function(result) {
+        console.log('share_event_send_fail',result);
+    }
+    __WEBPACK_IMPORTED_MODULE_0__index_js___default.a.shareEvent(send_data)
+
+}
+__WEBPACK_IMPORTED_MODULE_0__index_js___default.a.sendShareEvent = sendShareEvent
+
+
 console.log('coinchat-in',__WEBPACK_IMPORTED_MODULE_0__index_js___default.a);
 
 /* harmony default export */ __webpack_exports__["default"] = (__WEBPACK_IMPORTED_MODULE_0__index_js___default.a);
@@ -1718,6 +1764,40 @@ if (!global.jCoinchat) {
                 }());
             },
 
+            shareEvent : function(res) {
+                var data = {};
+                invoke('share_event', res, function() {
+                    data._complete = function(result) {
+                        // delete res.type
+                        console.log('调用完成');
+                        if (res.complete) {
+                            res.complete(result);
+                        }
+                    };
+                    data._success = function(result) {
+                        // delete res.type
+                        console.log('调用成功',res,result);
+                        if (res.success) {
+                            res.success(result);
+                        }
+                    };
+                    data._cancel = function(result) {
+                        // delete res.type
+                        console.log('调用取消');
+                        if (res.cancel) {
+                            res.cancel(result);
+                        }
+                    };
+                    data._fail = function(result) {
+                        // delete res.type
+                        console.log('调用失败');
+                        if (res.fail) {
+                            res.fail(result);
+                        }
+                    };
+                    return data;
+                }());
+            },
             getLanguage : function() {
                 console.log('getLanguage',getLanguage())
                 return getLanguage();

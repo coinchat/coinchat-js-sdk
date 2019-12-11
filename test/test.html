@@ -48,6 +48,22 @@
             <button onClick="coinchat.sendFirebaseEvent();" class="btn btn-primary btn-lg btn-block">firebase事件记录</button>
         </div>
     </div>
+
+    <div class="block-test block-test-invoke">
+        <h2>Share Event</h2>
+        <div>
+            <select id="share_platform" value="key" placeholder="key" class="form-control">
+                <option value="twitter">twitter</option>
+                <option value="facebook">facebook</option>
+                <option value="whatsapp">whats app</option>
+                <option value="telegram">telegram</option>
+            </select>
+            <input id="share_title" value="share_title" placeholder="share_title" class="form-control" />
+            <input id="share_text" value="this is share text" placeholder="this is share text" class="form-control" />
+            <button onClick="coinchat.sendShareEvent();" class="btn btn-primary btn-lg btn-block">share测试</button>
+        </div>
+    </div>
+
     <div class="block-test block-test-invoke">
         <h2>支付测试</h2>
         <div>
