@@ -14,9 +14,6 @@ coinchat.ready(function(){
     console.log('this is coinchat ready callback2');
 })
 
-
-
-
 //开始config
 function getConfig() {
     var timestamp = Math.floor(new Date().getTime() / 1000);

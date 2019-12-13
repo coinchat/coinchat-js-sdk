@@ -97,9 +97,6 @@ __WEBPACK_IMPORTED_MODULE_0__index_js___default.a.ready(function(){
     console.log('this is coinchat ready callback2');
 })
 
-
-
-
 //开始config
 function getConfig() {
     var timestamp = Math.floor(new Date().getTime() / 1000);
@@ -1325,6 +1322,11 @@ function getLanguage() {
     return dsBridge.call("getLanguage")
 }
 
+function getSharePlatform() {
+    //Call asynchronously
+    return dsBridge.call("getSharePlatform")
+}
+
 function on(sdkName, listener, handler) {
     global.CoinchatJSBridge ? CoinchatJSBridge.on(sdkName, function(res) {
         handler && handler.trigger && handler.trigger(res);
@@ -1802,7 +1804,10 @@ if (!global.jCoinchat) {
                 console.log('getLanguage',getLanguage())
                 return getLanguage();
             },
-
+            getSharePlatform : function() {
+                console.log('getSharePlatform',getSharePlatform())
+                return getSharePlatform();
+            },
         },
         next_iOSLocalImgId = 1,
         iOS_LocalImgMap = {};
