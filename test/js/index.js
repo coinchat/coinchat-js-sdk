@@ -292,6 +292,27 @@ function sendShareEvent() {
 coinchat.sendShareEvent = sendShareEvent
 
 
+function sendShowVideoAdEvent() {
+
+    var send_data = {}
+
+    send_data['complete'] = function(result) {
+        console.log('sendShowVideoAdEvent_complete',result);
+        alert('sendShowVideoAdEvent_complete');
+    }
+    send_data['success'] = function(result) {
+        console.log('sendShowVideoAdEvent_success',result);
+        alert('sendShowVideoAdEvent_success');
+    }
+    send_data['fail'] = function(result) {
+        console.log('sendShowVideoAdEvent_fail',result);
+        alert('sendShowVideoAdEvent_fail');
+    }
+    coinchat.showVideoAdEvent(send_data)
+
+}
+coinchat.sendShowVideoAdEvent = sendShowVideoAdEvent
+
 console.log('coinchat-in',coinchat);
 
 export default coinchat;

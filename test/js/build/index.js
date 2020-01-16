@@ -375,6 +375,27 @@ function sendShareEvent() {
 __WEBPACK_IMPORTED_MODULE_0__index_js___default.a.sendShareEvent = sendShareEvent
 
 
+function sendShowVideoAdEvent() {
+
+    var send_data = {}
+
+    send_data['complete'] = function(result) {
+        console.log('sendShowVideoAdEvent_complete',result);
+        alert('sendShowVideoAdEvent_complete');
+    }
+    send_data['success'] = function(result) {
+        console.log('sendShowVideoAdEvent_success',result);
+        alert('sendShowVideoAdEvent_success');
+    }
+    send_data['fail'] = function(result) {
+        console.log('sendShowVideoAdEvent_fail',result);
+        alert('sendShowVideoAdEvent_fail');
+    }
+    __WEBPACK_IMPORTED_MODULE_0__index_js___default.a.showVideoAdEvent(send_data)
+
+}
+__WEBPACK_IMPORTED_MODULE_0__index_js___default.a.sendShowVideoAdEvent = sendShowVideoAdEvent
+
 console.log('coinchat-in',__WEBPACK_IMPORTED_MODULE_0__index_js___default.a);
 
 /* harmony default export */ __webpack_exports__["default"] = (__WEBPACK_IMPORTED_MODULE_0__index_js___default.a);
@@ -1322,6 +1343,7 @@ function getLanguage() {
     return dsBridge.call("getLanguage")
 }
 
+
 function getSharePlatform() {
     //Call asynchronously
     return dsBridge.call("getSharePlatform")
@@ -1800,6 +1822,42 @@ if (!global.jCoinchat) {
                     return data;
                 }());
             },
+
+            showVideoAdEvent : function(res) {
+                var data = {};
+                invoke('show_video_ad', res, function() {
+                    data._complete = function(result) {
+                        // delete res.type
+                        console.log('调用完成');
+                        if (res.complete) {
+                            res.complete(result);
+                        }
+                    };
+                    data._success = function(result) {
+                        // delete res.type
+                        console.log('调用成功',res,result);
+                        if (res.success) {
+                            res.success(result);
+                        }
+                    };
+                    data._cancel = function(result) {
+                        // delete res.type
+                        console.log('调用取消');
+                        if (res.cancel) {
+                            res.cancel(result);
+                        }
+                    };
+                    data._fail = function(result) {
+                        // delete res.type
+                        console.log('调用失败');
+                        if (res.fail) {
+                            res.fail(result);
+                        }
+                    };
+                    return data;
+                }());
+            },
+
             getLanguage : function() {
                 console.log('getLanguage',getLanguage())
                 return getLanguage();
